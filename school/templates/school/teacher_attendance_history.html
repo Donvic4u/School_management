@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Attendance History</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .topbar {
+            background: #17365d;
+            color: white;
+            padding: 16px 20px;
+        }
+
+        .topbar-inner {
+            max-width: 1100px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .school-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .page-title {
+            font-size: 13px;
+            opacity: 0.85;
+            margin-top: 3px;
+        }
+
+        .logout {
+            display: inline-block;
+            background: #dc3545;
+            color: white;
+            text-decoration: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 25px auto;
+            padding: 0 15px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+
+        h1,
+        h2 {
+            color: #17365d;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        .info {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .filter-form {
+            display: flex;
+            gap: 10px;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        select {
+            min-width: 260px;
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        button,
+        .button {
+            border: 0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-weight: bold;
+            font-size: 14px;
+            text-decoration: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .primary {
+            background: #17365d;
+            color: white;
+        }
+
+        .secondary {
+            background: #198754;
+            color: white;
+        }
+
+        .back {
+            background: #64748b;
+            color: white;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 11px 9px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        th {
+            background: #17365d;
+            color: white;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .present {
+            color: #198754;
+        }
+
+        .absent {
+            color: #dc3545;
+        }
+
+        .late {
+            color: #b45309;
+        }
+
+        .excused {
+            color: #2563eb;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(180px, 1fr)
+            );
+            gap: 12px;
+        }
+
+        .summary-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 14px;
+        }
+
+        .summary-name {
+            font-weight: bold;
+            color: #17365d;
+            margin-bottom: 8px;
+        }
+
+        .summary-line {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .rate {
+            font-size: 18px;
+            font-weight: bold;
+            color: #17365d;
+        }
+
+        .actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 600px) {
+            .topbar-inner {
+                align-items: flex-start;
+            }
+
+            .school-title {
+                font-size: 17px;
+            }
+
+            select {
+                width: 100%;
+                min-width: 0;
+            }
+
+            th,
+            td {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="topbar">
+    <div class="topbar-inner">
+        <div>
+            <div class="school-title">
+                ROCK FOUNDATION ACADEMY AND COLLEGE
+            </div>
+            <div class="page-title">
+                ATTENDANCE HISTORY
+            </div>
+        </div>
+
+        <a href="{% url 'teacher_logout' %}" class="logout">
+            Logout
+        </a>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="card">
+        <h1>Attendance History</h1>
+
+        <div class="info">
+            <strong>Teacher:</strong> {{ teacher.full_name }}<br>
+            <strong>Class:</strong> {{ class_level.name }}<br>
+            <strong>Session:</strong> {{ current_term.session.name }}<br>
+            <strong>Term:</strong> {{ current_term.name }}
+        </div>
+
+        <br>
+
+        <form method="get" class="filter-form">
+            <div>
+                <label for="student_id">
+                    Filter by Student
+                </label>
+
+                <select name="student_id" id="student_id">
+                    <option value="">
+                        All Students
+                    </option>
+
+                    {% for enrollment in enrollments %}
+                        <option
+                            value="{{ enrollment.student.id }}"
+                            {% if selected_student and selected_student.id == enrollment.student.id %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ enrollment.student.full_name }}
+                            — {{ enrollment.student.admission_number }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="primary">
+                FILTER
+            </button>
+
+            <a
+                href="{% url 'teacher_attendance_history' %}"
+                class="button back"
+            >
+                CLEAR
+            </a>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Attendance Summary</h2>
+
+        <div class="summary-grid">
+            {% for enrollment in enrollments %}
+                {% if not selected_student or selected_student.id == enrollment.student.id %}
+                    
+                        <div class="summary-card">
+                            <div class="summary-name">
+                                {{ enrollment.student.full_name }}
+                            </div>
+
+                            <div class="summary-line">
+                                Admission:
+                                {{ enrollment.student.admission_number }}
+                            </div>
+
+                            <div class="summary-line">
+                                Present: {{ data.present }}
+                                &nbsp; | &nbsp;
+                                Absent: {{ data.absent }}
+                            </div>
+
+                            <div class="summary-line">
+                                Late: {{ data.late }}
+                                &nbsp; | &nbsp;
+                                Excused: {{ data.excused }}
+                            </div>
+
+                            <div class="summary-line">
+                                Total Marked: {{ data.total }}
+                            </div>
+
+                            <div class="rate">
+                                {{ data.rate }}%
+                            </div>
+                        </div>
+                    
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Attendance Records</h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Admission No.</th>
+                        <th>Student</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for row in history_rows %}
+                        <tr>
+                            <td>
+                                {{ row.date|date:"d M Y" }}
+                            </td>
+
+                            <td>
+                                {{ row.student.admission_number }}
+                            </td>
+
+                            <td>
+                                {{ row.student.full_name }}
+                            </td>
+
+                            <td class="status {{ row.status|lower }}">
+                                {{ row.status }}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4">
+                                No attendance records found.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="actions">
+            <a
+                href="{% url 'teacher_attendance' %}"
+                class="button secondary"
+            >
+                DAILY ATTENDANCE
+            </a>
+
+            <a
+                href="{% url 'teacher_dashboard' %}"
+                class="button back"
+            >
+                BACK TO DASHBOARD
+            </a>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

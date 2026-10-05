@@ -1,0 +1,284 @@
+{% extends "school/base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<style>
+    .teacher-page {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .page-header {
+        margin-bottom: 20px;
+    }
+
+    .page-header h2 {
+        margin-bottom: 6px;
+    }
+
+    .page-header p {
+        margin: 0;
+        color: #666;
+    }
+
+    .teacher-section {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 18px;
+    }
+
+    .teacher-section h3 {
+        margin-top: 0;
+        margin-bottom: 6px;
+    }
+
+    .section-note {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 18px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .form-field {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-field.full {
+        grid-column: 1 / -1;
+    }
+
+    .form-field label {
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    .form-field input,
+    .form-field select {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 11px 12px;
+        border: 1px solid #ccc;
+        border-radius: 7px;
+        font-size: 15px;
+    }
+
+    .form-field input:focus,
+    .form-field select:focus {
+        outline: none;
+        border-color: #555;
+    }
+
+    .field-error {
+        color: #b00020;
+        font-size: 13px;
+        margin-top: 5px;
+    }
+
+    .help-text {
+        color: #777;
+        font-size: 13px;
+        margin-top: 5px;
+    }
+
+    .active-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-top: 8px;
+    }
+
+    .active-row input {
+        width: auto;
+    }
+
+    .next-step {
+        background: #f7f7f7;
+        border-radius: 8px;
+        padding: 14px;
+        color: #555;
+        font-size: 14px;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+    }
+
+    @media (max-width: 650px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-field.full {
+            grid-column: auto;
+        }
+
+        .teacher-section {
+            padding: 16px;
+        }
+    }
+</style>
+
+<div class="teacher-page">
+
+    <div class="page-header">
+        <h2>{{ title }}</h2>
+
+        {% if teacher %}
+            <p>Update the information for {{ teacher.full_name }}.</p>
+        {% else %}
+            <p>Add a new teacher to the school system.</p>
+        {% endif %}
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="teacher-section">
+            <h3>Teacher Information</h3>
+
+            <p class="section-note">
+                Enter the teacher's official staff information.
+            </p>
+
+            <div class="form-grid">
+
+                <div class="form-field">
+                    <label for="{{ form.staff_id.id_for_label }}">
+                        Staff ID
+                    </label>
+
+                    {{ form.staff_id }}
+
+                    {% for error in form.staff_id.errors %}
+                        <div class="field-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.surname.id_for_label }}">
+                        Surname
+                    </label>
+
+                    {{ form.surname }}
+
+                    {% for error in form.surname.errors %}
+                        <div class="field-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.first_name.id_for_label }}">
+                        First Name
+                    </label>
+
+                    {{ form.first_name }}
+
+                    {% for error in form.first_name.errors %}
+                        <div class="field-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.other_names.id_for_label }}">
+                        Other Names
+                    </label>
+
+                    {{ form.other_names }}
+
+                    {% for error in form.other_names.errors %}
+                        <div class="field-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.phone.id_for_label }}">
+                        Phone Number
+                    </label>
+
+                    {{ form.phone }}
+
+                    {% for error in form.phone.errors %}
+                        <div class="field-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.email.id_for_label }}">
+                        Email Address
+                    </label>
+
+                    {{ form.email }}
+
+                    {% for error in form.email.errors %}
+                        <div class="field-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="form-field full">
+                    <label>Teacher Status</label>
+
+                    <div class="active-row">
+                        {{ form.active }}
+                        <span>Teacher is active</span>
+                    </div>
+
+                    {% for error in form.active.errors %}
+                        <div class="field-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </div>
+
+        <div class="teacher-section">
+            <h3>Next Steps</h3>
+
+            <div class="next-step">
+                <strong>After saving this teacher:</strong><br><br>
+
+                The administrator will be able to create the teacher's
+                login account, assign a Form Teacher class, and assign
+                subjects/classes for teaching.
+            </div>
+        </div>
+
+        {% if form.non_field_errors %}
+            <div class="teacher-section">
+                {% for error in form.non_field_errors %}
+                    <div class="field-error">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="form-actions">
+            <button type="submit">
+                {% if teacher %}
+                    Save Changes
+                {% else %}
+                    Add Teacher
+                {% endif %}
+            </button>
+
+            <a class="button secondary" href="{% url 'teacher_list' %}">
+                Cancel
+            </a>
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

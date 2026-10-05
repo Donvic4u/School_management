@@ -1,0 +1,574 @@
+{% extends "school/base.html" %}
+
+{% block title %}Student Management{% endblock %}
+
+{% block content %}
+
+<style>
+.student-directory {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.student-header {
+    background: linear-gradient(135deg, #17365d, #214b7a);
+    color: white;
+    border-radius: 12px;
+    padding: 24px 26px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(23, 54, 93, 0.15);
+}
+
+.student-header h2 {
+    margin: 0 0 6px;
+    font-size: 26px;
+}
+
+.student-header p {
+    margin: 0;
+    opacity: 0.9;
+}
+
+.directory-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+}
+
+.directory-actions .button {
+    text-decoration: none;
+}
+
+.add-student-btn {
+    background: #198754 !important;
+    color: white !important;
+    border: 1px solid #198754 !important;
+    padding: 10px 16px;
+    border-radius: 7px;
+    font-weight: 700;
+}
+
+.add-student-btn:hover {
+    background: #146c43 !important;
+}
+
+.search-card {
+    background: white;
+    border: 1px solid #d7dee6;
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.search-card h3 {
+    margin: 0 0 15px;
+    color: #17365d;
+    font-size: 17px;
+}
+
+.search-form {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: 12px;
+    align-items: end;
+}
+
+.search-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #344054;
+}
+
+.search-field input,
+.search-field select {
+    width: 100%;
+    min-height: 42px;
+    padding: 9px 11px;
+    border: 1px solid #cbd5df;
+    border-radius: 6px;
+    background: white;
+    box-sizing: border-box;
+}
+
+.search-field input:focus,
+.search-field select:focus {
+    outline: none;
+    border-color: #17365d;
+    box-shadow: 0 0 0 2px rgba(23,54,93,0.12);
+}
+
+.search-button {
+    min-height: 42px;
+    padding: 9px 18px;
+    background: #17365d;
+    color: white;
+    border: 1px solid #17365d;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.search-button:hover {
+    background: #102844;
+}
+
+.clear-button {
+    display: inline-block;
+    margin-top: 10px;
+    color: #17365d;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.school-section {
+    margin-bottom: 30px;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 9px;
+    border-bottom: 2px solid #d7dee6;
+}
+
+.section-heading h3 {
+    margin: 0;
+    color: #17365d;
+    font-size: 21px;
+}
+
+.section-heading span {
+    font-size: 13px;
+    color: #667085;
+}
+
+.class-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.class-card {
+    background: white;
+    border: 1px solid #d7dee6;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 7px rgba(0,0,0,0.05);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.class-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px rgba(0,0,0,0.09);
+}
+
+.class-card-header {
+    background: #f3f6fa;
+    border-bottom: 1px solid #d7dee6;
+    padding: 15px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.class-card-header h4 {
+    margin: 0;
+    color: #17365d;
+    font-size: 18px;
+}
+
+.student-count {
+    background: #17365d;
+    color: white;
+    border-radius: 20px;
+    padding: 4px 9px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.class-card-body {
+    padding: 15px 16px;
+}
+
+.student-preview {
+    min-height: 65px;
+}
+
+.student-preview-item {
+    padding: 7px 0;
+    border-bottom: 1px solid #edf0f3;
+}
+
+.student-preview-item:last-child {
+    border-bottom: none;
+}
+
+.student-preview-name {
+    display: block;
+    color: #253858;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.student-preview-admission {
+    display: block;
+    color: #667085;
+    font-size: 11px;
+    margin-top: 2px;
+}
+
+.no-students {
+    color: #98a2b3;
+    font-size: 13px;
+    padding: 10px 0;
+}
+
+.view-class {
+    display: block;
+    text-align: center;
+    margin-top: 13px;
+    padding: 9px 10px;
+    background: #17365d;
+    color: white !important;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.view-class:hover {
+    background: #102844;
+}
+
+.unassigned-card {
+    background: white;
+    border: 1px solid #d7dee6;
+    border-radius: 10px;
+    padding: 18px;
+    margin-top: 25px;
+    box-shadow: 0 2px 7px rgba(0,0,0,0.05);
+}
+
+.unassigned-card h3 {
+    margin: 0 0 12px;
+    color: #17365d;
+}
+
+.unassigned-item {
+    display: inline-block;
+    margin: 4px 6px 4px 0;
+    padding: 7px 10px;
+    background: #f3f6fa;
+    border: 1px solid #d7dee6;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+@media (max-width: 850px) {
+    .class-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .search-form {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .search-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .student-header {
+        padding: 20px;
+    }
+
+    .student-header h2 {
+        font-size: 22px;
+    }
+
+    .class-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .search-form {
+        grid-template-columns: 1fr;
+    }
+
+    .directory-actions {
+        align-items: stretch;
+    }
+
+    .add-student-btn {
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+    }
+}
+
+.student-edit-link {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 4px 10px;
+    border: 1px solid #198754;
+    border-radius: 5px;
+    background: #ffffff;
+    color: #198754 !important;
+    font-size: 10px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.student-edit-link:hover {
+    background: #198754;
+    color: #ffffff !important;
+}
+
+</style>
+
+<div class="student-directory">
+
+    <div class="student-header">
+        <h2>Student Management</h2>
+        <p>Manage students by class category and academic level.</p>
+    </div>
+
+    <div class="directory-actions">
+        <div>
+            <strong style="color:#17365d;">Class Directory</strong>
+            <span style="color:#667085; font-size:13px;">
+                — Select a class to view its students
+            </span>
+        </div>
+
+        <a href="{% url 'student_add' %}" class="button add-student-btn">
+            + Add Student
+        </a>
+    </div>
+
+    <div class="search-card">
+        <h3>Search &amp; Filter Students</h3>
+
+        <form method="get" class="search-form">
+
+            <div class="search-field">
+                {{ form.search.label_tag }}
+                {{ form.search }}
+            </div>
+
+            <div class="search-field">
+                {{ form.class_level.label_tag }}
+                {{ form.class_level }}
+            </div>
+
+            <div class="search-field">
+                {{ form.gender.label_tag }}
+                {{ form.gender }}
+            </div>
+
+            <div>
+                <button type="submit" class="search-button">
+                    Search
+                </button>
+            </div>
+
+        </form>
+
+        {% if form.active %}
+            <div style="margin-top:12px;">
+                {{ form.active }}
+                {{ form.active.label_tag }}
+            </div>
+        {% endif %}
+
+        {% if request.GET %}
+            <a href="{% url 'student_list' %}" class="clear-button">
+                Clear Filters
+            </a>
+        {% endif %}
+    </div>
+
+
+    <!-- JUNIOR SECONDARY -->
+
+    <section class="school-section">
+
+        <div class="section-heading">
+            <h3>Junior Secondary School (JSS)</h3>
+            <span>JSS 1 – JSS 3</span>
+        </div>
+
+        <div class="class-grid">
+
+            {% for item in jss_classes %}
+
+                <div class="class-card">
+
+                    <div class="class-card-header">
+                        <h4>{{ item.class_level.name }}</h4>
+
+                        <span class="student-count">
+                            {{ item.count }}
+                            {% if item.count == 1 %}
+                                Student
+                            {% else %}
+                                Students
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    <div class="class-card-body">
+
+                        <div class="student-preview">
+
+                            {% for student in item.students|slice:":4" %}
+
+                                <div class="student-preview-item">
+                                    <span class="student-preview-name">
+                                        {{ student.full_name }}
+                                    </span>
+
+                                    <span class="student-preview-admission">
+                                        {{ student.admission_number }}
+                                    </span>
+                                    <a href="{% url 'student_edit' student.id %}" class="student-edit-link">
+                                        EDIT
+                                    </a>
+                                </div>
+
+                            {% empty %}
+
+                                <div class="no-students">
+                                    No students enrolled.
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                        <a
+                            href="{% url 'student_list' %}?class_level={{ item.class_level.id }}"
+                            class="view-class"
+                        >
+                            View {{ item.class_level.name }} Students →
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- SENIOR SECONDARY -->
+
+    <section class="school-section">
+
+        <div class="section-heading">
+            <h3>Senior Secondary School (SSS)</h3>
+            <span>SSS 1 – SSS 3</span>
+        </div>
+
+        <div class="class-grid">
+
+            {% for item in sss_classes %}
+
+                <div class="class-card">
+
+                    <div class="class-card-header">
+                        <h4>{{ item.class_level.name }}</h4>
+
+                        <span class="student-count">
+                            {{ item.count }}
+                            {% if item.count == 1 %}
+                                Student
+                            {% else %}
+                                Students
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    <div class="class-card-body">
+
+                        <div class="student-preview">
+
+                            {% for student in item.students|slice:":4" %}
+
+                                <div class="student-preview-item">
+                                    <span class="student-preview-name">
+                                        {{ student.full_name }}
+                                    </span>
+
+                                    <span class="student-preview-admission">
+                                        {{ student.admission_number }}
+                                    </span>
+                                    <a href="{% url 'student_edit' student.id %}" class="student-edit-link">
+                                        EDIT
+                                    </a>
+                                </div>
+
+                            {% empty %}
+
+                                <div class="no-students">
+                                    No students enrolled.
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                        <a
+                            href="{% url 'student_list' %}?class_level={{ item.class_level.id }}"
+                            class="view-class"
+                        >
+                            View {{ item.class_level.name }} Students →
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    {% if unassigned_students %}
+
+        <div class="unassigned-card">
+
+            <h3>Students Without a Class</h3>
+
+            {% for student in unassigned_students %}
+
+                <span class="unassigned-item">
+                    {{ student.full_name }}
+                    <small>({{ student.admission_number }})</small>
+                </span>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

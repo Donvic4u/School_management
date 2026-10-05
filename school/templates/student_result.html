@@ -1,0 +1,143 @@
+{% extends "school/base.html" %}
+
+{% block content %}
+
+<div style="max-width:1100px;margin:auto;">
+
+    <h1 style="text-align:center;">STUDENT RESULT SHEET</h1>
+
+    {% if error %}
+        <div style="padding:12px;background:#ffe0e0;margin-bottom:20px;">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    {% if enrollment %}
+
+    <div style="margin-bottom:20px;">
+        <h2>{{ student.full_name }}</h2>
+        <p><strong>Admission No.:</strong> {{ student.admission_number }}</p>
+        <p><strong>Class:</strong> {{ enrollment.class_level.name }}</p>
+        <p><strong>Session/Term:</strong> {{ term }}</p>
+    </div>
+
+    <table border="1" cellpadding="8" cellspacing="0"
+           style="width:100%;border-collapse:collapse;">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Subject</th>
+                <th>CA1<br>/10</th>
+                <th>CA2<br>/10</th>
+                <th>CA3<br>/10</th>
+                <th>CA<br>/30</th>
+                <th>Exam<br>/70</th>
+                <th>Total<br>/100</th>
+                <th>Grade</th>
+                <th>Remark</th>
+                <th>Position</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for item in subjects %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ item.subject.subject__name }}</td>
+
+                <td>
+                    {% if item.approved %}
+                        {{ item.ca1 }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if item.approved %}
+                        {{ item.ca2 }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if item.approved %}
+                        {{ item.ca3 }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if item.approved %}
+                        {{ item.ca_total }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if item.approved %}
+                        {{ item.exam }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if item.approved %}
+                        {{ item.total }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+
+                <td>{{ item.grade }}</td>
+                <td>{{ item.remark }}</td>
+                <td>{{ item.position }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+
+    <table border="1" cellpadding="10" cellspacing="0"
+           style="border-collapse:collapse;width:100%;max-width:650px;">
+        <tr>
+            <th>Total Marks</th>
+            <td>{{ total_marks }}</td>
+        </tr>
+
+        <tr>
+            <th>Average</th>
+            <td>{{ average|floatformat:2 }}</td>
+        </tr>
+
+        <tr>
+            <th>Overall Position</th>
+            <td>{{ position }}</td>
+        </tr>
+
+        <tr>
+            <th>Overall Grade</th>
+            <td>{{ overall_grade }}</td>
+        </tr>
+
+        <tr>
+            <th>Overall Remark</th>
+            <td>{{ overall_remark }}</td>
+        </tr>
+
+        <tr>
+            <th>Subjects Completed</th>
+            <td>{{ completed_subjects }} / {{ total_subjects }}</td>
+        </tr>
+    </table>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

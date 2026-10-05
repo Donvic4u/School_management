@@ -1,0 +1,738 @@
+{% extends "school/base.html" %}
+
+{% block title %}Student Enrollment Management{% endblock %}
+
+{% block content %}
+
+<style>
+.enrollment-page {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* =========================
+   PAGE HEADER
+   ========================= */
+
+.enrollment-header {
+    background: #17365d;
+    color: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(23,54,93,.14);
+}
+
+.enrollment-header h2 {
+    margin: 0 0 7px;
+    font-size: 25px;
+}
+
+.enrollment-header p {
+    margin: 0;
+    color: rgba(255,255,255,.88);
+    line-height: 1.55;
+    font-size: 14px;
+}
+
+/* =========================
+   GENERAL CARDS
+   ========================= */
+
+.enrollment-card {
+    background: white;
+    border: 1px solid #d7dee6;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,.05);
+}
+
+.enrollment-card h3 {
+    margin: 0 0 17px;
+    color: #17365d;
+    font-size: 18px;
+}
+
+/* =========================
+   FORM
+   ========================= */
+
+.enrollment-form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(180px, 1fr));
+    gap: 16px;
+}
+
+.enrollment-field label {
+    display: block;
+    margin-bottom: 7px;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.enrollment-field input,
+.enrollment-field select,
+.enrollment-search input,
+.enrollment-filter select {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid #cbd5df;
+    border-radius: 7px;
+    background: #fff;
+    color: #1f2937;
+    font-size: 14px;
+}
+
+.enrollment-field input:focus,
+.enrollment-field select:focus,
+.enrollment-search input:focus,
+.enrollment-filter select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,.11);
+}
+
+.enrollment-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.enrollment-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px 17px;
+    border: 0;
+    border-radius: 7px;
+    background: #198754;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.enrollment-primary:hover {
+    background: #157347;
+}
+
+.enrollment-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px 17px;
+    border: 1px solid #cbd5df;
+    border-radius: 7px;
+    background: #f8fafc;
+    color: #374151;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.enrollment-secondary:hover {
+    background: #eef2f6;
+}
+
+/* =========================
+   ERRORS
+   ========================= */
+
+.enrollment-errors {
+    margin-bottom: 16px;
+    padding: 11px 13px;
+    background: #fff0f1;
+    border: 1px solid #f3c2c7;
+    border-left: 4px solid #dc3545;
+    border-radius: 7px;
+    color: #9f1d2d;
+    font-size: 13px;
+}
+
+.enrollment-field-errors {
+    margin-top: 5px;
+    color: #b42332;
+    font-size: 12px;
+}
+
+/* =========================
+   SEARCH / FILTER
+   ========================= */
+
+.enrollment-search {
+    margin-bottom: 17px;
+}
+
+.enrollment-search label,
+.enrollment-filter label {
+    display: block;
+    margin-bottom: 7px;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.enrollment-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(180px, 1fr));
+    gap: 16px;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+}
+
+.filter-button {
+    min-height: 42px;
+    padding: 10px 17px;
+    border: 0;
+    border-radius: 7px;
+    background: #17365d;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.filter-button:hover {
+    background: #122d4e;
+}
+
+.clear-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px 17px;
+    border: 1px solid #cbd5df;
+    border-radius: 7px;
+    background: white;
+    color: #475569;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.clear-button:hover {
+    background: #f3f5f7;
+}
+
+/* =========================
+   HISTORY SUMMARY
+   ========================= */
+
+.enrollment-history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.enrollment-history-header h3 {
+    margin: 0;
+}
+
+.record-count {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border: 1px solid #cbd9e8;
+    border-radius: 999px;
+    background: #eef4fb;
+    color: #24557f;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* =========================
+   TABLE
+   ========================= */
+
+.enrollment-table-wrap {
+    overflow-x: auto;
+    border: 1px solid #cfd8e3;
+    border-radius: 9px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.enrollment-table {
+    width: 100%;
+    min-width: 780px;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.enrollment-table th {
+    padding: 13px 12px;
+    background: #17365d;
+    color: white;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .25px;
+    border-right: 1px solid rgba(255,255,255,.18);
+    white-space: nowrap;
+}
+
+.enrollment-table th:last-child {
+    border-right: 0;
+}
+
+.enrollment-table td {
+    padding: 13px 12px;
+    border-right: 1px solid #e0e6ec;
+    border-bottom: 1px solid #dfe5eb;
+    color: #374151;
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+.enrollment-table td:last-child {
+    border-right: 0;
+}
+
+.enrollment-table tbody tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+.enrollment-table tbody tr:hover {
+    background: #eef5fb;
+}
+
+.enrollment-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.student-name {
+    color: #17365d;
+    font-weight: 700;
+}
+
+.admission-badge {
+    display: inline-block;
+    padding: 5px 8px;
+    border: 1px solid #ccd7e3;
+    border-radius: 6px;
+    background: #eef3f8;
+    color: #24557f;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.class-badge {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 6px;
+    background: #e8f7ee;
+    border: 1px solid #b7dfc8;
+    color: #187a3d;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.empty-enrollment {
+    padding: 35px 20px;
+    text-align: center;
+    color: #6b7280;
+}
+
+.empty-enrollment strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #17365d;
+    font-size: 15px;
+}
+
+@media (max-width: 800px) {
+    .enrollment-form-grid,
+    .enrollment-filter-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .enrollment-header {
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    .enrollment-header h2 {
+        font-size: 21px;
+    }
+
+    .enrollment-card {
+        padding: 14px;
+        border-radius: 10px;
+    }
+
+    .enrollment-actions,
+    .filter-actions {
+        flex-direction: column;
+    }
+
+    .enrollment-primary,
+    .enrollment-secondary,
+    .filter-button,
+    .clear-button {
+        width: 100%;
+    }
+}
+</style>
+
+<div class="enrollment-page">
+
+    <!-- PAGE HEADER -->
+
+    <div class="enrollment-header">
+
+        <h2>Student Enrollment Management</h2>
+
+        <p>
+            Add students to an academic term and class without changing
+            their previous academic history.
+        </p>
+
+    </div>
+
+
+    <!-- ADD ENROLLMENT -->
+
+    <div class="enrollment-card">
+
+        <h3>Add New Enrollment</h3>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="enrollment-errors">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="enrollment-form-grid">
+
+                <div class="enrollment-field">
+
+                    <label for="{{ form.student.id_for_label }}">
+                        Student
+                    </label>
+
+                    {{ form.student }}
+
+                    {% if form.student.errors %}
+                        <div class="enrollment-field-errors">
+                            {{ form.student.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+                <div class="enrollment-field">
+
+                    <label for="{{ form.class_level.id_for_label }}">
+                        Class
+                    </label>
+
+                    {{ form.class_level }}
+
+                    {% if form.class_level.errors %}
+                        <div class="enrollment-field-errors">
+                            {{ form.class_level.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+                <div class="enrollment-field">
+
+                    <label for="{{ form.term.id_for_label }}">
+                        Academic Term
+                    </label>
+
+                    {{ form.term }}
+
+                    {% if form.term.errors %}
+                        <div class="enrollment-field-errors">
+                            {{ form.term.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            <div class="enrollment-actions">
+
+                <button
+                    type="submit"
+                    class="enrollment-primary"
+                >
+                    Add Enrollment
+                </button>
+
+                <a
+                    href="{% url 'student_list' %}"
+                    class="enrollment-secondary"
+                >
+                    Back to Students
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- SEARCH / FILTER -->
+
+    <div class="enrollment-card">
+
+        <h3>Find Enrollment Records</h3>
+
+        <form method="get">
+
+            <div class="enrollment-search">
+
+                <label for="search">
+                    Student / Admission Number
+                </label>
+
+                <input
+                    type="text"
+                    id="search"
+                    name="search"
+                    value="{{ search }}"
+                    placeholder="Search student name or admission number"
+                >
+
+            </div>
+
+            <div class="enrollment-filter-grid">
+
+                <div class="enrollment-filter">
+
+                    <label for="session">
+                        Academic Session
+                    </label>
+
+                    <select id="session" name="session">
+
+                        <option value="">
+                            All Sessions
+                        </option>
+
+                        {% for session in sessions %}
+
+                            <option
+                                value="{{ session.id }}"
+                                {% if selected_session == session.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ session.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="enrollment-filter">
+
+                    <label for="term">
+                        Term
+                    </label>
+
+                    <select id="term" name="term">
+
+                        <option value="">
+                            All Terms
+                        </option>
+
+                        {% for term in terms %}
+
+                            <option
+                                value="{{ term.id }}"
+                                {% if selected_term == term.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ term.session.name }} — {{ term.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="enrollment-filter">
+
+                    <label for="class_level">
+                        Class
+                    </label>
+
+                    <select id="class_level" name="class_level">
+
+                        <option value="">
+                            All Classes
+                        </option>
+
+                        {% for class_level in classes %}
+
+                            <option
+                                value="{{ class_level.id }}"
+                                {% if selected_class == class_level.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ class_level.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div class="filter-actions">
+
+                <button
+                    type="submit"
+                    class="filter-button"
+                >
+                    Filter Records
+                </button>
+
+                <a
+                    href="{% url 'enrollment_management' %}"
+                    class="clear-button"
+                >
+                    Clear Filters
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- ENROLLMENT HISTORY -->
+
+    <div class="enrollment-card">
+
+        <div class="enrollment-history-header">
+
+            <h3>Enrollment History</h3>
+
+            <span class="record-count">
+                {{ enrollments|length }}
+                record{{ enrollments|length|pluralize }}
+            </span>
+
+        </div>
+
+        <div class="enrollment-table-wrap">
+
+            <table class="enrollment-table">
+
+                <thead>
+
+                    <tr>
+                        <th>STUDENT</th>
+                        <th>ADMISSION NO.</th>
+                        <th>SESSION</th>
+                        <th>TERM</th>
+                        <th>CLASS</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for enrollment in enrollments %}
+
+                    <tr>
+
+                        <td>
+                            <span class="student-name">
+                                {{ enrollment.student.full_name }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="admission-badge">
+                                {{ enrollment.student.admission_number }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {{ enrollment.term.session.name }}
+                        </td>
+
+                        <td>
+                            {{ enrollment.term.name }}
+                        </td>
+
+                        <td>
+                            <span class="class-badge">
+                                {{ enrollment.class_level.name }}
+                            </span>
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="5">
+
+                            <div class="empty-enrollment">
+
+                                <strong>
+                                    No enrollment records found
+                                </strong>
+
+                                No records match the selected filters.
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

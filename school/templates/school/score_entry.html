@@ -1,0 +1,292 @@
+{% extends "school/base.html" %}
+{% load school_extras %}
+
+{% block content %}
+
+<div class="container">
+    <h2>Score Entry</h2>
+
+    {% if current_term %}
+        <p><strong>Current Term:</strong> {{ current_term }}</p>
+    {% else %}
+        <p style="color:red;">No current term has been set.</p>
+    {% endif %}
+
+    <form method="get" style="margin-bottom:20px;">
+        <label><strong>Class:</strong></label>
+        <select name="class_id" onchange="this.form.submit()">
+            <option value="">-- Select Class --</option>
+
+            {% for class in classes %}
+                <option value="{{ class.id }}"
+                    {% if selected_class and selected_class.id == class.id %}selected{% endif %}>
+                    {{ class.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label style="margin-left:20px;"><strong>Subject:</strong></label>
+        <select name="subject_id" onchange="this.form.submit()">
+            <option value="">-- Select Subject --</option>
+
+            {% for subject in subjects %}
+                <option value="{{ subject.id }}"
+                    {% if selected_subject and selected_subject.id == subject.id %}selected{% endif %}>
+                    {{ subject.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </form>
+
+    {% if selected_class and selected_subject %}
+
+        <h3>
+            {{ selected_class.name }} — {{ selected_subject.name }}
+        </h3>
+
+        {% if enrollments %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div style="overflow-x:auto;">
+
+                <table border="1" cellpadding="8" cellspacing="0"
+                       style="width:100%; border-collapse:collapse;">
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Admission No.</th>
+                            <th>Student</th>
+                            <th>CA1 /10</th>
+                            <th>CA2 /10</th>
+                            <th>CA3 /10</th>
+                            <th>CA /30</th>
+                            <th>Exam /70</th>
+                            <th>Total /100</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for enrollment in enrollments %}
+
+                        {% with score=score_data|get_item:enrollment.id %}
+
+                        <tr>
+
+                            <td>{{ forloop.counter }}</td>
+
+                            <td>
+                                {{ enrollment.student.admission_number }}
+                            </td>
+
+                            <td>
+                                {{ enrollment.student.full_name }}
+                            </td>
+
+                            <td>
+                                <input
+                                    type="number"
+                                    name="student_{{ enrollment.id }}_ca1"
+                                    class="score-input ca1"
+                                    data-row="{{ enrollment.id }}"
+                                    min="0"
+                                    max="10"
+                                    step="0.01"
+                                    value="{% if score %}{{ score.ca1_score }}{% else %}0{% endif %}"
+                                    style="width:80px;">
+                            </td>
+
+                            <td>
+                                <input
+                                    type="number"
+                                    name="student_{{ enrollment.id }}_ca2"
+                                    class="score-input ca2"
+                                    data-row="{{ enrollment.id }}"
+                                    min="0"
+                                    max="10"
+                                    step="0.01"
+                                    value="{% if score %}{{ score.ca2_score }}{% else %}0{% endif %}"
+                                    style="width:80px;">
+                            </td>
+
+                            <td>
+                                <input
+                                    type="number"
+                                    name="student_{{ enrollment.id }}_ca3"
+                                    class="score-input ca3"
+                                    data-row="{{ enrollment.id }}"
+                                    min="0"
+                                    max="10"
+                                    step="0.01"
+                                    value="{% if score %}{{ score.ca3_score }}{% else %}0{% endif %}"
+                                    style="width:80px;">
+                            </td>
+
+                            <td>
+                                <strong>
+                                    <span id="ca_total_{{ enrollment.id }}">
+                                        {% if score %}
+                                            {{ score.ca_total }}
+                                        {% else %}
+                                            0
+                                        {% endif %}
+                                    </span>
+                                </strong>
+                            </td>
+
+                            <td>
+                                <input
+                                    type="number"
+                                    name="student_{{ enrollment.id }}_exam"
+                                    class="score-input exam"
+                                    data-row="{{ enrollment.id }}"
+                                    min="0"
+                                    max="70"
+                                    step="0.01"
+                                    value="{% if score %}{{ score.exam_score }}{% else %}0{% endif %}"
+                                    style="width:80px;">
+                            </td>
+
+                            <td>
+                                <strong>
+                                    <span id="grand_total_{{ enrollment.id }}">
+                                        {% if score %}
+                                            {{ score.total }}
+                                        {% else %}
+                                            0
+                                        {% endif %}
+                                    </span>
+                                </strong>
+                            </td>
+
+                        </tr>
+
+                        {% endwith %}
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <br>
+
+            <button type="submit">
+                Save Scores
+            </button>
+
+        </form>
+
+        {% else %}
+
+            <p>
+                No students are enrolled in
+                <strong>{{ selected_class.name }}</strong>
+                for the current term.
+            </p>
+
+        {% endif %}
+
+    {% else %}
+
+        <p>
+            Select a class and subject to enter scores.
+        </p>
+
+    {% endif %}
+
+</div>
+
+
+<script>
+
+function numberValue(input) {
+    let value = parseFloat(input.value);
+    return isNaN(value) ? 0 : value;
+}
+
+function updateRow(rowId) {
+
+    const ca1 = document.querySelector(
+        'input[name="student_' + rowId + '_ca1"]'
+    );
+
+    const ca2 = document.querySelector(
+        'input[name="student_' + rowId + '_ca2"]'
+    );
+
+    const ca3 = document.querySelector(
+        'input[name="student_' + rowId + '_ca3"]'
+    );
+
+    const exam = document.querySelector(
+        'input[name="student_' + rowId + '_exam"]'
+    );
+
+    if (!ca1 || !ca2 || !ca3 || !exam) {
+        return;
+    }
+
+    const caTotal =
+        numberValue(ca1) +
+        numberValue(ca2) +
+        numberValue(ca3);
+
+    const grandTotal =
+        caTotal +
+        numberValue(exam);
+
+    const caElement = document.getElementById(
+        'ca_total_' + rowId
+    );
+
+    const totalElement = document.getElementById(
+        'grand_total_' + rowId
+    );
+
+    if (caElement) {
+        caElement.textContent = caTotal.toFixed(2);
+    }
+
+    if (totalElement) {
+        totalElement.textContent = grandTotal.toFixed(2);
+    }
+}
+
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    const inputs = document.querySelectorAll(".score-input");
+
+    inputs.forEach(function(input) {
+
+        input.addEventListener("input", function() {
+
+            const rowId = this.getAttribute("data-row");
+
+            updateRow(rowId);
+
+        });
+
+    });
+
+    const rows = new Set();
+
+    inputs.forEach(function(input) {
+        rows.add(input.getAttribute("data-row"));
+    });
+
+    rows.forEach(function(rowId) {
+        updateRow(rowId);
+    });
+
+});
+
+</script>
+
+{% endblock %}

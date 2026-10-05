@@ -1,0 +1,1036 @@
+{% extends "school/base.html" %}
+
+{% block title %}Student Academic Result{% endblock %}
+
+{% block content %}
+
+<style>
+.result-page {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    color: #111827;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ACTIONS */
+
+.print-controls {
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.result-action {
+    display: inline-block;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid;
+    text-decoration: none;
+}
+
+.print-button {
+    background: #17365d;
+    border-color: #17365d;
+    color: white;
+}
+
+.print-button:hover {
+    background: #102844;
+}
+
+.pdf-button {
+    background: #198754;
+    border-color: #198754;
+    color: white;
+}
+
+.pdf-button:hover {
+    background: #146c43;
+}
+
+.sms-button {
+    background: #1769aa;
+    border-color: #1769aa;
+    color: white;
+}
+
+.email-button {
+    background: #0d6efd;
+    color: #ffffff;
+}
+
+.email-button:hover {
+    background: #0b5ed7;
+}
+
+.sms-button:hover {
+    background: #125584;
+}
+
+.back-button {
+    background: white;
+    border-color: #cbd5df;
+    color: #344054;
+}
+
+.back-button:hover {
+    background: #f3f6fa;
+}
+
+/* REPORT */
+
+.report-card {
+    background: white;
+    border: 1px solid #d7dee6;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+}
+
+/* SCHOOL HEADER */
+
+.school-header {
+    text-align: center;
+    background: linear-gradient(135deg, #17365d, #214b7a);
+    color: white;
+    border-radius: 10px;
+    padding: 22px 18px;
+    margin-bottom: 16px;
+}
+
+.school-header h1 {
+    margin: 0 0 7px;
+    font-size: 25px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+}
+
+.school-header p {
+    margin: 3px 0;
+    font-size: 12px;
+}
+
+.school-motto {
+    font-weight: 700;
+    font-style: italic;
+    margin-top: 8px !important;
+}
+
+/* TITLE */
+
+.report-title {
+    text-align: center;
+    margin: 14px 0 17px;
+}
+
+.report-title h2 {
+    display: inline-block;
+    margin: 0;
+    padding: 8px 18px;
+    border: 2px solid #17365d;
+    border-radius: 6px;
+    color: #17365d;
+    font-size: 17px;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+}
+
+/* STUDENT INFORMATION */
+
+.student-info {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 17px;
+    table-layout: fixed;
+}
+
+.student-info td {
+    border: 1px solid #cbd5df;
+    padding: 8px;
+    font-size: 12px;
+    vertical-align: middle;
+}
+
+.student-info .label {
+    width: 14%;
+    font-weight: 700;
+    color: #17365d;
+    background: #f3f6fa;
+}
+
+.result-reference {
+    font-weight: 800;
+    letter-spacing: .3px;
+}
+
+/* RESULT TABLE */
+
+.result-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid #cbd5df;
+    border-radius: 7px;
+}
+
+.result-table {
+    width: 100%;
+    min-width: 800px;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+.result-table th,
+.result-table td {
+    border: 1px solid #cbd5df;
+    padding: 7px 5px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.result-table thead th {
+    background: #17365d;
+    color: white;
+    font-weight: 700;
+}
+
+.result-table tbody tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+.result-table tbody tr:hover {
+    background: #eef3f8;
+}
+
+.result-table td.subject {
+    text-align: left;
+    font-weight: 700;
+    color: #253858;
+    min-width: 170px;
+}
+
+/* SUMMARY */
+
+.summary {
+    margin-top: 17px;
+}
+
+.summary-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.summary-table td {
+    border: 1px solid #cbd5df;
+    padding: 9px;
+    font-size: 12px;
+}
+
+.summary-table .label {
+    width: 17%;
+    background: #f3f6fa;
+    color: #17365d;
+    font-weight: 700;
+}
+
+.summary-value {
+    font-weight: 800;
+    text-align: center;
+    color: #17365d;
+}
+
+/* REMARKS */
+
+.remarks {
+    margin-top: 20px;
+}
+
+.remark-row {
+    margin-bottom: 13px;
+}
+
+.remark-title {
+    color: #17365d;
+    font-weight: 800;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.remarks-box {
+    border: 1px solid #cbd5df;
+    border-radius: 6px;
+    min-height: 45px;
+    padding: 9px;
+    background: #fafbfc;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* SIGNATURES */
+
+.signatures {
+    display: flex;
+    justify-content: space-between;
+    gap: 35px;
+    margin-top: 52px;
+}
+
+.signature {
+    width: 30%;
+    text-align: center;
+    font-size: 11px;
+    color: #344054;
+}
+
+.signature-line {
+    border-top: 1px solid #344054;
+    padding-top: 7px;
+}
+
+/* FOOTER */
+
+.result-footer {
+    text-align: center;
+    margin-top: 22px;
+    padding-top: 10px;
+    border-top: 1px solid #cbd5df;
+    font-size: 9px;
+    line-height: 1.5;
+    color: #667085;
+}
+
+.footer-school-name {
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 10px;
+    color: #17365d;
+}
+
+.footer-contact {
+    margin-top: 2px;
+}
+
+.footer-status {
+    margin-top: 5px;
+    font-weight: 800;
+    font-size: 8px;
+    color: #17365d;
+}
+
+/* DOWNLOAD */
+
+.download-area {
+    margin-top: 15px;
+}
+
+.download-button {
+    display: inline-block;
+    padding: 10px 16px;
+    background: #198754;
+    color: white !important;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.download-button:hover {
+    background: #146c43;
+}
+
+/* MOBILE */
+
+@media (max-width: 650px) {
+
+    .report-card {
+        padding: 14px;
+    }
+
+    .school-header {
+        padding: 19px 12px;
+    }
+
+    .school-header h1 {
+        font-size: 20px;
+    }
+
+    .report-title h2 {
+        font-size: 15px;
+    }
+
+    .student-info {
+        min-width: 700px;
+    }
+
+    .student-info-wrapper {
+        overflow-x: auto;
+    }
+
+    .summary-table {
+        min-width: 650px;
+    }
+
+    .summary-wrapper {
+        overflow-x: auto;
+    }
+
+    .signatures {
+        gap: 15px;
+        margin-top: 38px;
+    }
+
+    .signature {
+        font-size: 9px;
+    }
+
+    .result-action {
+        flex: 1;
+        text-align: center;
+        min-width: 120px;
+    }
+}
+
+
+/* PRINT */
+
+@media print {
+
+    @page {
+        size: A4 portrait;
+        margin: 9mm;
+    }
+
+    html,
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+    }
+
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .result-page {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+    }
+
+    .print-controls,
+    .download-area,
+    nav,
+    header,
+    footer {
+        display: none !important;
+    }
+
+    .report-card {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+    }
+
+    .school-header {
+        background: white !important;
+        color: black !important;
+        border-bottom: 2px solid #111;
+        border-radius: 0;
+        padding-bottom: 7px;
+        margin-bottom: 8px;
+    }
+
+    .school-header h1 {
+        color: black !important;
+        font-size: 21px;
+    }
+
+    .school-header p {
+        color: black !important;
+        font-size: 10px;
+        margin: 2px 0;
+    }
+
+    .report-title {
+        margin: 8px 0 10px;
+    }
+
+    .report-title h2 {
+        color: black !important;
+        border-color: #222;
+        font-size: 14px;
+        padding: 4px 12px;
+    }
+
+    .student-info {
+        margin-bottom: 9px;
+    }
+
+    .student-info td {
+        padding: 5px 6px;
+        font-size: 9px;
+    }
+
+    .result-table-wrapper {
+        overflow: visible;
+        border: none;
+    }
+
+    .result-table {
+        min-width: 0;
+        font-size: 8.5px;
+    }
+
+    .result-table th,
+    .result-table td {
+        padding: 4px 3px;
+    }
+
+    .result-table thead th {
+        background: #eeeeee !important;
+        color: black !important;
+    }
+
+    .summary {
+        margin-top: 9px;
+    }
+
+    .summary-table td {
+        padding: 5px;
+        font-size: 9px;
+    }
+
+    .remarks {
+        margin-top: 10px;
+    }
+
+    .remark-row {
+        margin-bottom: 7px;
+    }
+
+    .remark-title {
+        font-size: 9px;
+        margin-bottom: 2px;
+    }
+
+    .remarks-box {
+        min-height: 30px;
+        padding: 5px;
+        font-size: 9px;
+    }
+
+    .signatures {
+        margin-top: 32px;
+        gap: 25px;
+    }
+
+    .signature {
+        font-size: 9px;
+    }
+
+    .signature-line {
+        padding-top: 4px;
+    }
+
+    .result-footer {
+        margin-top: 9px;
+        padding-top: 5px;
+        font-size: 7px;
+        line-height: 1.35;
+    }
+
+    .footer-school-name {
+        font-size: 8px;
+    }
+
+    .footer-status {
+        font-size: 6.5px;
+        margin-top: 2px;
+    }
+
+    tr {
+        page-break-inside: avoid;
+    }
+
+    table {
+        page-break-inside: auto;
+    }
+}
+</style>
+
+
+<div class="result-page">
+
+    <!-- SCREEN ACTIONS -->
+
+    <div class="print-controls">
+
+        <button
+            type="button"
+            class="result-action print-button"
+            onclick="window.print();"
+        >
+            🖨 Print Result
+        </button>
+
+        <button
+            type="button"
+            class="result-action pdf-button"
+            onclick="window.print();"
+        >
+            📄 Save as PDF
+        </button>
+
+        <button
+            type="button"
+            class="result-action sms-button"
+            onclick="sendResultSMS();"
+        >
+            📱 Send Result by SMS
+        </button>
+
+        {% if student.email %}
+        <form
+            method="post"
+            action="{% url 'email_student_result' student.id %}"
+            style="display:inline;"
+        >
+            {% csrf_token %}
+            <button
+                type="submit"
+                class="result-action email-button"
+                onclick="return confirm('Email this result PDF to {{ student.email|escapejs }}?');"
+            >
+                📧 Email Result
+            </button>
+        </form>
+        {% else %}
+        <button
+            type="button"
+            class="result-action email-button"
+            onclick="alert('No email address is saved for this student. Add a student or parent/guardian email first.');"
+        >
+            📧 Email Result
+        </button>
+        {% endif %}
+
+        <button
+            type="button"
+            class="result-action back-button"
+            onclick="history.back();"
+        >
+            ← Back
+        </button>
+
+    </div>
+
+
+    <div class="report-card">
+
+        <!-- SCHOOL HEADER -->
+
+        <div class="school-header">
+
+            {% if school %}
+
+                <h1>{{ school.name }}</h1>
+
+                {% if school.address %}
+                    <p>{{ school.address }}</p>
+                {% endif %}
+
+                {% if school.phone %}
+                    <p>Tel: {{ school.phone }}</p>
+                {% endif %}
+
+                {% if school.email %}
+                    <p>Email: {{ school.email }}</p>
+                {% endif %}
+
+                {% if school.motto %}
+                    <p class="school-motto">
+                        {{ school.motto }}
+                    </p>
+                {% endif %}
+
+            {% else %}
+
+                <h1>School Result</h1>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- REPORT TITLE -->
+
+        <div class="report-title">
+            <h2>Student Academic Result</h2>
+        </div>
+
+
+        <!-- STUDENT INFORMATION -->
+
+        {% if enrollment %}
+
+            <div class="student-info-wrapper">
+
+                <table class="student-info">
+
+                    <tr>
+
+                        <td class="label">Student</td>
+                        <td>{{ student.full_name }}</td>
+
+                        <td class="label">Admission No.</td>
+                        <td>{{ student.admission_number }}</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td class="label">Class</td>
+                        <td>{{ enrollment.class_level.name }}</td>
+
+                        <td class="label">Session</td>
+                        <td>{{ term.session.name }}</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td class="label">Term</td>
+                        <td>{{ term.name }}</td>
+
+                        <td class="label">Gender</td>
+                        <td>{{ student.gender }}</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td class="label">Result Ref.</td>
+
+                        <td colspan="3" class="result-reference">
+                            {{ result_reference }}
+                        </td>
+
+                    </tr>
+
+                </table>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- SUBJECT RESULTS -->
+
+        <div class="result-table-wrapper">
+
+            <table class="result-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Subject</th>
+                        <th>CA1<br>/10</th>
+                        <th>CA2<br>/10</th>
+                        <th>CA3<br>/10</th>
+                        <th>Exam<br>/70</th>
+                        <th>Total<br>/100</th>
+                        <th>Grade</th>
+                        <th>Remark</th>
+                        <th>Position</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for row in results %}
+
+                        <tr>
+
+                            <td class="subject">
+                                {{ row.subject.subject__name }}
+                            </td>
+
+                            <td>{{ row.ca1 }}</td>
+                            <td>{{ row.ca2 }}</td>
+                            <td>{{ row.ca3 }}</td>
+                            <td>{{ row.exam }}</td>
+
+                            <td>
+                                <strong>{{ row.total }}</strong>
+                            </td>
+
+                            <td>{{ row.grade }}</td>
+
+                            <td>{{ row.remark }}</td>
+
+                            <td>{{ row.position }}</td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+
+                            <td colspan="9">
+                                No approved results available.
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- SUMMARY -->
+
+        <div class="summary">
+
+            <div class="summary-wrapper">
+
+                <table class="summary-table">
+
+                    <tr>
+
+                        <td class="label">
+                            Total Marks
+                        </td>
+
+                        <td class="summary-value">
+                            {{ summary.total_marks }}
+                        </td>
+
+                        <td class="label">
+                            Average
+                        </td>
+
+                        <td class="summary-value">
+                            {{ summary.average }}
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td class="label">
+                            Overall Grade
+                        </td>
+
+                        <td class="summary-value">
+                            {{ summary.grade }}
+                        </td>
+
+                        <td class="label">
+                            Overall Position
+                        </td>
+
+                        <td class="summary-value">
+                            {{ summary.position }}
+                        </td>
+
+                    </tr>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- REMARKS -->
+
+        <div class="remarks">
+
+            <div class="remark-row">
+
+                <div class="remark-title">
+                    FORM TEACHER'S REMARK
+                </div>
+
+                <div class="remarks-box">
+                    {{ form_teacher_remark|default:'' }}
+                </div>
+
+            </div>
+
+
+            <div class="remark-row">
+
+                <div class="remark-title">
+                    PRINCIPAL'S OVERALL REMARK
+                </div>
+
+                <div class="remarks-box">
+                    {{ principal_remark }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SIGNATURES -->
+
+        <div class="signatures">
+
+            <div class="signature">
+
+                <div class="signature-line">
+                    Form Teacher's Signature
+                </div>
+
+            </div>
+
+
+            <div class="signature">
+
+                <div class="signature-line">
+                    Principal's Signature
+                </div>
+
+            </div>
+
+
+            <div class="signature">
+
+                <div class="signature-line">
+                    Date
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- OFFICIAL FOOTER -->
+
+        <div class="result-footer">
+
+            {% if school %}
+
+                <div class="footer-school-name">
+                    {{ school.name }}
+                </div>
+
+                {% if school.address %}
+
+                    <div class="footer-contact">
+                        {{ school.address }}
+                    </div>
+
+                {% endif %}
+
+                {% if school.phone or school.email %}
+
+                    <div class="footer-contact">
+
+                        {% if school.phone %}
+                            Tel: {{ school.phone }}
+                        {% endif %}
+
+                        {% if school.phone and school.email %}
+                            &nbsp; | &nbsp;
+                        {% endif %}
+
+                        {% if school.email %}
+                            Email: {{ school.email }}
+                        {% endif %}
+
+                    </div>
+
+                {% endif %}
+
+            {% endif %}
+
+            <div class="footer-status">
+                OFFICIAL STUDENT ACADEMIC RESULT
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- PDF DOWNLOAD -->
+
+    <div class="download-area">
+
+        <a
+            href="{% url 'student_result_pdf' student.id %}"
+            target="_blank"
+            class="download-button"
+        >
+            📄 Download Result PDF
+        </a>
+
+    </div>
+
+</div>
+
+
+<script>
+function sendResultSMS() {
+
+    const phone =
+        "{{ student.phone_number|escapejs }}";
+
+
+    if (!phone) {
+
+        alert(
+            "No phone number is saved for this student. " +
+            "Please add the student's or parent/guardian " +
+            "phone number first."
+        );
+
+        return;
+    }
+
+
+    const lines = [
+
+        "RESULT — {{ student.full_name|escapejs }}",
+
+        {% for result in results %}
+
+        "{{ result.subject.subject__name|escapejs }}: {{ result.total|escapejs }}"{% if not forloop.last %},{% endif %}
+
+        {% endfor %}
+
+    ];
+
+
+    const message =
+        lines.join(String.fromCharCode(10));
+
+
+    const smsUrl =
+        "sms:" +
+        phone +
+        "?body=" +
+        encodeURIComponent(message);
+
+
+    window.location.href = smsUrl;
+
+}
+</script>
+
+{% endblock %}

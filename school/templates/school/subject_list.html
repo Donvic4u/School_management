@@ -1,0 +1,518 @@
+{% extends "school/base.html" %}
+
+{% block title %}Subjects{% endblock %}
+
+{% block content %}
+
+<style>
+    .subjects-page {
+        max-width: 1150px;
+        margin: 0 auto;
+    }
+
+    /* =========================
+       PAGE HEADER
+       ========================= */
+
+    .subjects-header {
+        background: linear-gradient(135deg, #17365d, #214d7d);
+        color: white;
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(23, 54, 93, 0.15);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+        flex-wrap: wrap;
+    }
+
+    .subjects-header h2 {
+        margin: 0 0 6px;
+        font-size: 25px;
+        letter-spacing: -0.2px;
+    }
+
+    .subjects-header p {
+        margin: 0;
+        color: rgba(255,255,255,0.82);
+        font-size: 14px;
+    }
+
+    .add-subject-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        background: #198754;
+        color: white;
+        text-decoration: none;
+        padding: 11px 17px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        border: 1px solid rgba(255,255,255,0.35);
+        box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        transition: all 0.15s ease;
+    }
+
+    .add-subject-btn:hover {
+        background: #157347;
+        transform: translateY(-1px);
+    }
+
+    /* =========================
+       SUMMARY
+       ========================= */
+
+    .subjects-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+
+    .summary-card {
+        background: white;
+        border: 1px solid #dce3ea;
+        border-radius: 11px;
+        padding: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .summary-label {
+        color: #6b7280;
+        font-size: 12px;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: .4px;
+    }
+
+    .summary-number {
+        margin-top: 5px;
+        color: #17365d;
+        font-size: 25px;
+        font-weight: 800;
+    }
+
+    /* =========================
+       TABLE CARD
+       ========================= */
+
+    .subjects-card {
+        background: white;
+        border: 1px solid #d7dee6;
+        border-radius: 14px;
+        padding: 18px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    }
+
+    .subjects-card-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .subjects-card-title h3 {
+        margin: 0;
+        color: #17365d;
+        font-size: 17px;
+    }
+
+    .subjects-card-title span {
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .subjects-table-wrap {
+        overflow-x: auto;
+        border: 1px solid #cfd8e3;
+        border-radius: 10px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .subjects-table {
+        width: 100%;
+        min-width: 700px;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    /* =========================
+       TABLE HEADER
+       ========================= */
+
+    .subjects-table thead th {
+        background: #17365d;
+        color: white;
+        padding: 13px 14px;
+        text-align: left;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .3px;
+        border-right: 1px solid rgba(255,255,255,0.18);
+        white-space: nowrap;
+    }
+
+    .subjects-table thead th:last-child {
+        border-right: 0;
+    }
+
+    .subjects-table thead th:first-child {
+        border-top-left-radius: 9px;
+    }
+
+    .subjects-table thead th:last-child {
+        border-top-right-radius: 9px;
+    }
+
+    /* =========================
+       TABLE BODY
+       ========================= */
+
+    .subjects-table tbody td {
+        padding: 14px;
+        border-right: 1px solid #e1e7ee;
+        border-bottom: 1px solid #dfe5eb;
+        font-size: 14px;
+        color: #374151;
+        vertical-align: middle;
+    }
+
+    .subjects-table tbody td:last-child {
+        border-right: 0;
+    }
+
+    .subjects-table tbody tr:nth-child(even) {
+        background: #f8fafc;
+    }
+
+    .subjects-table tbody tr:hover {
+        background: #eef5fb;
+    }
+
+    .subjects-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .subject-code {
+        display: inline-block;
+        background: #eef3f8;
+        border: 1px solid #ccd7e3;
+        color: #17365d;
+        padding: 5px 8px;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 12px;
+    }
+
+    .subject-name {
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .score-limit {
+        font-weight: 700;
+        color: #17365d;
+    }
+
+    /* =========================
+       STATUS
+       ========================= */
+
+    .subject-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+        border: 1px solid;
+    }
+
+    .subject-status.active {
+        background: #e8f7ee;
+        border-color: #b7dfc8;
+        color: #187a3d;
+    }
+
+    .subject-status.inactive {
+        background: #f1f3f5;
+        border-color: #d5d9de;
+        color: #6b7280;
+    }
+
+    /* =========================
+       EDIT BUTTON
+       ========================= */
+
+    .subject-edit-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 65px;
+        padding: 7px 11px;
+        border-radius: 6px;
+        border: 1px solid #b9cbe0;
+        background: #edf4fc;
+        color: #2457a6;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 700;
+        transition: all .15s ease;
+    }
+
+    .subject-edit-btn:hover {
+        background: #dceafd;
+        border-color: #91afd0;
+        transform: translateY(-1px);
+    }
+
+    /* =========================
+       EMPTY STATE
+       ========================= */
+
+    .subjects-empty {
+        text-align: center;
+        padding: 45px 20px;
+        color: #6b7280;
+    }
+
+    .subjects-empty-icon {
+        font-size: 35px;
+        margin-bottom: 10px;
+    }
+
+    .subjects-empty strong {
+        display: block;
+        color: #17365d;
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+
+    /* =========================
+       MOBILE
+       ========================= */
+
+    @media (max-width: 700px) {
+
+        .subjects-header {
+            padding: 20px;
+            border-radius: 11px;
+        }
+
+        .subjects-header h2 {
+            font-size: 21px;
+        }
+
+        .add-subject-btn {
+            width: 100%;
+        }
+
+        .subjects-card {
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        .subjects-table {
+            min-width: 700px;
+        }
+
+        .subjects-table thead th,
+        .subjects-table tbody td {
+            padding: 11px 10px;
+        }
+
+        .subjects-summary {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+</style>
+
+<div class="subjects-page">
+
+    <!-- PAGE HEADER -->
+
+    <div class="subjects-header">
+
+        <div>
+            <h2>Subject Management</h2>
+
+            <p>
+                Manage academic subjects, assessment limits and subject status.
+            </p>
+        </div>
+
+        <a
+            class="add-subject-btn"
+            href="{% url 'subject_add' %}"
+        >
+            <span>＋</span>
+            <span>Add Subject</span>
+        </a>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="subjects-summary">
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Total Subjects
+            </div>
+
+            <div class="summary-number">
+                {{ subjects|length }}
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUBJECT TABLE -->
+
+    <div class="subjects-card">
+
+        <div class="subjects-card-title">
+
+            <h3>Academic Subjects</h3>
+
+            <span>
+                {{ subjects|length }}
+                subject{{ subjects|length|pluralize }}
+            </span>
+
+        </div>
+
+        <div class="subjects-table-wrap">
+
+            <table class="subjects-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>CODE</th>
+
+                        <th>SUBJECT</th>
+
+                        <th>CA</th>
+
+                        <th>EXAM</th>
+
+                        <th>STATUS</th>
+
+                        <th>ACTION</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for subject in subjects %}
+
+                    <tr>
+
+                        <td>
+                            <span class="subject-code">
+                                {{ subject.code }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="subject-name">
+                                {{ subject.name }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="score-limit">
+                                {{ subject.max_ca }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="score-limit">
+                                {{ subject.max_exam }}
+                            </span>
+                        </td>
+
+                        <td>
+
+                            {% if subject.active %}
+
+                                <span class="subject-status active">
+                                    ● Active
+                                </span>
+
+                            {% else %}
+
+                                <span class="subject-status inactive">
+                                    ● Inactive
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <a
+                                class="subject-edit-btn"
+                                href="{% url 'subject_edit' subject.id %}"
+                            >
+                                Edit
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="6">
+
+                            <div class="subjects-empty">
+
+                                <div class="subjects-empty-icon">
+                                    📚
+                                </div>
+
+                                <strong>
+                                    No subjects found
+                                </strong>
+
+                                <span>
+                                    Add the first subject to begin building the academic structure.
+                                </span>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

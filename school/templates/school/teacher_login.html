@@ -1,0 +1,49 @@
+{% extends "school/base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+    <h2>Teacher Login</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div style="padding:10px; margin-bottom:10px; border:1px solid #ccc;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" action="{% url 'teacher_login' %}">
+        {% csrf_token %}
+
+        <p>
+            <label for="username">Username</label><br>
+            <input
+                id="username"
+                type="text"
+                name="username"
+                required
+                autocomplete="username"
+            >
+        </p>
+
+        <p>
+            <label for="password">Password</label><br>
+            <input
+                id="password"
+                type="password"
+                name="password"
+                required
+                autocomplete="current-password"
+            >
+        </p>
+
+        <button type="submit">
+            Login
+        </button>
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,566 @@
+{% extends "school/base.html" %}
+
+{% block title %}Promotion Status{% endblock %}
+
+{% block content %}
+
+<style>
+.promotion-page {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.promotion-header {
+    background: #17365d;
+    color: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.promotion-header h1 {
+    margin: 0 0 8px;
+    font-size: 26px;
+}
+
+.promotion-header p {
+    margin: 0;
+    line-height: 1.6;
+    opacity: .92;
+}
+
+.process-note {
+    margin-top: 18px;
+    background: rgba(255,255,255,.10);
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 8px;
+    padding: 13px 15px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.promotion-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.promotion-stat {
+    background: white;
+    border: 1px solid #dfe3e8;
+    border-radius: 10px;
+    padding: 18px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.05);
+}
+
+.promotion-stat-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #666;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.promotion-stat-number {
+    font-size: 28px;
+    font-weight: 700;
+    color: #17365d;
+}
+
+.promotion-stat.eligible {
+    border-left: 5px solid #198754;
+}
+
+.promotion-stat.eligible .promotion-stat-number {
+    color: #198754;
+}
+
+.promotion-stat.not-eligible {
+    border-left: 5px solid #dc3545;
+}
+
+.promotion-stat.not-eligible .promotion-stat-number {
+    color: #dc3545;
+}
+
+.promotion-stat.waiting {
+    border-left: 5px solid #f59e0b;
+}
+
+.promotion-stat.waiting .promotion-stat-number {
+    color: #a15c00;
+}
+
+.promotion-stat.completed {
+    border-left: 5px solid #2563eb;
+}
+
+.promotion-stat.completed .promotion-stat-number {
+    color: #2563eb;
+}
+
+.filter-card {
+    background: white;
+    border: 1px solid #dfe3e8;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.05);
+}
+
+.filter-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #17365d;
+    margin-bottom: 15px;
+}
+
+.filter-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(180px, 1fr)) auto;
+    gap: 14px;
+    align-items: end;
+}
+
+.filter-field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: #444;
+    margin-bottom: 6px;
+}
+
+.filter-field select {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #cfd5dc;
+    border-radius: 7px;
+    background: white;
+    font-size: 14px;
+}
+
+.filter-field select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37,99,235,.12);
+}
+
+.view-button {
+    border: 0;
+    border-radius: 7px;
+    padding: 11px 18px;
+    background: #17365d;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 14px;
+    min-height: 42px;
+}
+
+.view-button:hover {
+    background: #122d4e;
+}
+
+.evaluating-bar {
+    background: #eef4fb;
+    border: 1px solid #cbd9ea;
+    border-radius: 8px;
+    padding: 13px 15px;
+    margin-bottom: 18px;
+    color: #334155;
+}
+
+.evaluating-bar strong {
+    color: #17365d;
+}
+
+.results-card {
+    background: white;
+    border: 1px solid #dfe3e8;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.05);
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    border: 1px solid #dfe3e8;
+    border-radius: 9px;
+}
+
+.promotion-table {
+    width: 100%;
+    min-width: 1050px;
+    border-collapse: collapse;
+}
+
+.promotion-table th {
+    background: #17365d;
+    color: white;
+    padding: 12px 10px;
+    text-align: left;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .2px;
+    border-right: 1px solid rgba(255,255,255,.18);
+}
+
+.promotion-table th:last-child {
+    border-right: 0;
+}
+
+.promotion-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #e5e7eb;
+    color: #333;
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+.promotion-table tbody tr:nth-child(even) {
+    background: #fafbfc;
+}
+
+.promotion-table tbody tr:hover {
+    background: #f1f5f9;
+}
+
+.student-name {
+    color: #17365d;
+    font-weight: 700;
+}
+
+.admission-number {
+    color: #777;
+    font-size: 11px;
+    margin-top: 3px;
+}
+
+.category-badge {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 15px;
+    background: #eef2f7;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.eligibility-badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.eligibility-badge.yes {
+    background: #e8f7ee;
+    color: #187a3d;
+    border: 1px solid #b7dfc8;
+}
+
+.eligibility-badge.no {
+    background: #fff0f1;
+    color: #b42332;
+    border: 1px solid #f3c2c7;
+}
+
+.destination {
+    font-weight: 700;
+    color: #17365d;
+}
+
+.average {
+    font-weight: 700;
+}
+
+.failed-subjects {
+    color: #b42332;
+}
+
+.no-failures {
+    color: #198754;
+    font-weight: 600;
+}
+
+.reason-text {
+    color: #555;
+    line-height: 1.45;
+}
+
+.empty-message {
+    padding: 22px;
+    border-radius: 9px;
+    background: #fff8e1;
+    border: 1px solid #f5d27a;
+    border-left: 5px solid #f59e0b;
+    color: #7a5200;
+}
+
+@media (max-width: 700px) {
+    .promotion-header {
+        padding: 20px;
+    }
+
+    .promotion-header h1 {
+        font-size: 21px;
+    }
+
+    .filter-form {
+        grid-template-columns: 1fr;
+    }
+
+    .view-button {
+        width: 100%;
+    }
+
+    .results-card {
+        padding: 10px;
+    }
+}
+</style>
+
+<div class="promotion-page">
+
+    <div class="promotion-header">
+        <h1>Automatic Promotion Status</h1>
+
+        <p>
+            Promotion is automatic. Students are evaluated from approved
+            Third Term results and are promoted when they satisfy the
+            school's promotion requirements.
+        </p>
+
+        <div class="process-note">
+            <strong>Automatic process:</strong>
+            There is no manual promotion button on this page.
+            Promotion occurs automatically when the required Third Term
+            scores are approved.
+        </div>
+    </div>
+
+    {% if selected_term %}
+
+    <div class="promotion-stats">
+
+        <div class="promotion-stat">
+            <div class="promotion-stat-label">Students Evaluated</div>
+            <div class="promotion-stat-number">
+                {{ total_students }}
+            </div>
+        </div>
+
+        <div class="promotion-stat eligible">
+            <div class="promotion-stat-label">Eligible</div>
+            <div class="promotion-stat-number">
+                {{ eligible_count }}
+            </div>
+        </div>
+
+        <div class="promotion-stat not-eligible">
+            <div class="promotion-stat-label">Not Eligible</div>
+            <div class="promotion-stat-number">
+                {{ not_eligible_count }}
+            </div>
+        </div>
+
+        <div class="promotion-stat waiting">
+            <div class="promotion-stat-label">Waiting for Next Session</div>
+            <div class="promotion-stat-number">
+                {{ waiting_count }}
+            </div>
+        </div>
+
+        <div class="promotion-stat completed">
+            <div class="promotion-stat-label">Completed SSS3</div>
+            <div class="promotion-stat-number">
+                {{ completed_sss3_count }}
+            </div>
+        </div>
+
+    </div>
+
+    {% endif %}
+
+    <div class="filter-card">
+
+        <div class="filter-title">
+            Promotion Status Filter
+        </div>
+
+        <form method="get" class="filter-form">
+
+            <div class="filter-field">
+                <label for="session">Academic Session</label>
+
+                <select name="session" id="session">
+                    {% for session in sessions %}
+                        <option
+                            value="{{ session.id }}"
+                            {% if selected_session and session.id == selected_session.id %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ session.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="term">Term</label>
+
+                <select name="term" id="term">
+                    {% for term in terms %}
+                        <option
+                            value="{{ term.id }}"
+                            {% if selected_term and term.id == selected_term.id %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ term.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="view-button">
+                View Promotion Status
+            </button>
+
+        </form>
+
+    </div>
+
+    {% if selected_term %}
+
+        <div class="evaluating-bar">
+            <strong>Evaluating:</strong>
+            {{ selected_term.session.name }} — {{ selected_term.name }}
+        </div>
+
+        {% if promotion_results %}
+
+            <div class="results-card">
+
+                <div class="table-wrapper">
+
+                    <table class="promotion-table">
+
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Class</th>
+                                <th>Category</th>
+                                <th>Average</th>
+                                <th>Failed Subjects</th>
+                                <th>Eligibility</th>
+                                <th>Automatic Destination</th>
+                                <th>Reason</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for item in promotion_results %}
+
+                            <tr>
+
+                                <td>
+                                    <div class="student-name">
+                                        {{ item.enrollment.student.full_name }}
+                                    </div>
+
+                                    <div class="admission-number">
+                                        {{ item.enrollment.student.admission_number }}
+                                    </div>
+                                </td>
+
+                                <td>
+                                    {{ item.enrollment.class_level.name }}
+                                </td>
+
+                                <td>
+                                    <span class="category-badge">
+                                        {{ item.evaluation.category }}
+                                    </span>
+                                </td>
+
+                                <td class="average">
+                                    {% if item.evaluation.average != None %}
+                                        {{ item.evaluation.average|floatformat:2 }}%
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if item.evaluation.failed_subjects %}
+                                        <span class="failed-subjects">
+                                            {{ item.evaluation.failed_subjects|join:", " }}
+                                        </span>
+                                    {% else %}
+                                        <span class="no-failures">
+                                            None
+                                        </span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if item.evaluation.eligible %}
+                                        <span class="eligibility-badge yes">
+                                            ELIGIBLE
+                                        </span>
+                                    {% else %}
+                                        <span class="eligibility-badge no">
+                                            NOT ELIGIBLE
+                                        </span>
+                                    {% endif %}
+                                </td>
+
+                                <td class="destination">
+                                    {{ item.destination }}
+                                </td>
+
+                                <td class="reason-text">
+                                    {% if item.evaluation.reasons %}
+                                        {{ item.evaluation.reasons|join:"; " }}
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-message">
+                No students are enrolled for this term.
+            </div>
+
+        {% endif %}
+
+    {% else %}
+
+        <div class="empty-message">
+            No academic term is available for the selected session.
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

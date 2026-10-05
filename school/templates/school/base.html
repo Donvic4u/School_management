@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}
+            Rock Foundation Academy and College
+        {% endblock %}
+    </title>
+
+    <style>
+    * {
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family:
+            Inter,
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            Roboto,
+            Arial,
+            sans-serif;
+        background: #f5f7fa;
+        color: #1f2937;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    .top-bar {
+        background: linear-gradient(135deg, #198754, #0f6f43);
+        color: white;
+        padding: 12px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.10);
+    }
+
+    .school-title {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+    }
+
+    .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .form-teacher-login {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        background: white;
+        color: #198754;
+        padding: 9px 15px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        transition:
+            background 0.18s ease,
+            color 0.18s ease,
+            transform 0.18s ease;
+    }
+
+    .form-teacher-login:hover {
+        background: #eaf7ef;
+        color: #0f6f43;
+        transform: translateY(-1px);
+    }
+
+    .form-teacher-login:focus-visible {
+        outline: 3px solid rgba(255, 255, 255, 0.55);
+        outline-offset: 2px;
+    }
+
+    .main-container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px 18px 40px;
+    }
+
+    .messages {
+        margin-bottom: 18px;
+    }
+
+    .message {
+        padding: 12px 15px;
+        margin-bottom: 9px;
+        border-radius: 8px;
+        background: #e9f7ef;
+        border: 1px solid #b7dfc8;
+        color: #185c37;
+        font-size: 14px;
+    }
+
+    a {
+        color: #0d6efd;
+        transition: color 0.15s ease;
+    }
+
+    a:hover {
+        color: #0a58ca;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+        font-family: inherit;
+    }
+
+    button,
+    input[type="submit"],
+    input[type="button"] {
+        cursor: pointer;
+    }
+
+    input,
+    select,
+    textarea {
+        max-width: 100%;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus,
+    button:focus-visible,
+    a:focus-visible {
+        outline: 3px solid rgba(13, 110, 253, 0.20);
+        outline-offset: 1px;
+    }
+
+    table {
+        max-width: 100%;
+    }
+
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    @media (max-width: 700px) {
+        .top-bar {
+            padding: 12px 14px;
+            flex-direction: column;
+            align-items: stretch;
+            text-align: center;
+        }
+
+        .school-title {
+            font-size: 16px;
+        }
+
+        .top-actions {
+            justify-content: center;
+        }
+
+        .form-teacher-login {
+            width: 100%;
+        }
+
+        .main-container {
+            padding: 18px 10px 30px;
+        }
+    }
+
+    @media (max-width: 420px) {
+        .school-title {
+            font-size: 15px;
+        }
+
+        .main-container {
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html {
+            scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+            transition-duration: 0.01ms !important;
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+        }
+    }
+</style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+    <div class="top-bar">
+
+        <div class="school-title">
+            ROCK FOUNDATION ACADEMY AND COLLEGE
+        </div>
+
+        <div class="top-actions">
+
+            <a
+                href="{% url 'teacher_login' %}"
+                class="form-teacher-login"
+            >
+                FORM TEACHER LOGIN
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <main class="main-container">
+
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+</body>
+</html>

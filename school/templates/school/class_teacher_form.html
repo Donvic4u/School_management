@@ -1,0 +1,168 @@
+{% extends "school/base.html" %}
+
+{% block title %}Assign Form Teacher{% endblock %}
+
+{% block content %}
+
+<div style="
+    max-width:650px;
+    margin:0 auto;
+">
+
+    <div class="card">
+
+        <div style="
+            margin-bottom:24px;
+            padding-bottom:18px;
+            border-bottom:1px solid #e5e7eb;
+        ">
+
+            <div style="
+                font-size:13px;
+                color:#666;
+                margin-bottom:6px;
+                text-transform:uppercase;
+                letter-spacing:.4px;
+            ">
+                Form Teacher Assignment
+            </div>
+
+            <h2 style="
+                margin:0 0 8px 0;
+            ">
+                {{ class_level.name }}
+            </h2>
+
+            {% if class_level.form_teacher %}
+
+                <p style="
+                    margin:0;
+                    color:#555;
+                ">
+                    Current Form Teacher:
+                    <strong>{{ class_level.form_teacher.full_name }}</strong>
+                </p>
+
+            {% else %}
+
+                <p style="
+                    margin:0;
+                    color:#a15c00;
+                ">
+                    No Form Teacher is currently assigned to this class.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div style="
+                margin-bottom:22px;
+            ">
+
+                <label
+                    for="{{ form.form_teacher.id_for_label }}"
+                    style="
+                        display:block;
+                        margin-bottom:8px;
+                        font-weight:600;
+                    "
+                >
+                    Form Teacher
+                </label>
+
+                {{ form.form_teacher }}
+
+                {% if form.form_teacher.errors %}
+
+                    <div style="
+                        margin-top:7px;
+                        color:#b42318;
+                        font-size:14px;
+                    ">
+                        {{ form.form_teacher.errors }}
+                    </div>
+
+                {% endif %}
+
+                {% if form.form_teacher.help_text %}
+
+                    <div style="
+                        margin-top:7px;
+                        color:#777;
+                        font-size:13px;
+                    ">
+                        {{ form.form_teacher.help_text }}
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            {% if form.non_field_errors %}
+
+                <div style="
+                    margin-bottom:18px;
+                    padding:12px;
+                    border-radius:7px;
+                    background:#fef3f2;
+                    color:#b42318;
+                ">
+                    {{ form.non_field_errors }}
+                </div>
+
+            {% endif %}
+
+
+            <div style="
+                display:flex;
+                gap:10px;
+                flex-wrap:wrap;
+                align-items:center;
+            ">
+
+                <button
+                    type="submit"
+                    style="
+                        border:0;
+                        border-radius:7px;
+                        padding:11px 18px;
+                        background:#2563eb;
+                        color:white;
+                        font-weight:600;
+                        cursor:pointer;
+                    "
+                >
+                    Save Assignment
+                </button>
+
+                <a
+                    href="{% url 'class_list' %}"
+                    style="
+                        display:inline-block;
+                        padding:10px 16px;
+                        border-radius:7px;
+                        background:#f1f3f5;
+                        color:#333;
+                        text-decoration:none;
+                        font-weight:600;
+                    "
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

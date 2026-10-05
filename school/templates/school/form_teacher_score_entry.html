@@ -1,0 +1,395 @@
+{% extends "school/base.html" %}
+
+{% block content %}
+
+<style>
+.form-score-page {
+    max-width: 1150px;
+    margin: 0 auto;
+    padding: 4px 0 30px;
+}
+
+.form-score-header {
+    background: linear-gradient(135deg, #17365d, #214d7d);
+    color: #ffffff;
+    border-radius: 14px;
+    padding: 25px 27px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 16px rgba(23,54,93,.14);
+}
+
+.form-score-header h1 {
+    margin: 0 0 7px;
+    font-size: 26px;
+    font-weight: 800;
+}
+
+.form-score-header p {
+    margin: 4px 0;
+    color: #e8eef5;
+    font-size: 14px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.info-card {
+    background: #ffffff;
+    border: 1px solid #d7dee6;
+    border-radius: 10px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 8px rgba(23,54,93,.05);
+}
+
+.info-label {
+    display: block;
+    color: #667085;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    letter-spacing: .3px;
+}
+
+.info-value {
+    color: #17365d;
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.message {
+    padding: 11px 13px;
+    margin: 10px 0 16px;
+    border: 1px solid #d7dee6;
+    border-radius: 7px;
+    background: #f8fafc;
+    color: #344054;
+    font-size: 13px;
+}
+
+.students-card {
+    background: #ffffff;
+    border: 1px solid #d7dee6;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(23,54,93,.07);
+}
+
+.students-card-header {
+    padding: 17px 19px;
+    background: #f3f6fa;
+    border-bottom: 1px solid #d7dee6;
+}
+
+.students-card-header h2 {
+    margin: 0;
+    color: #17365d;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.score-status-table {
+    width: 100%;
+    min-width: 700px;
+    border-collapse: collapse;
+}
+
+.score-status-table th {
+    background: #17365d;
+    color: #ffffff;
+    border: 1px solid #34597f;
+    padding: 11px 9px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.score-status-table th:first-child,
+.score-status-table td:first-child {
+    text-align: center;
+    width: 55px;
+}
+
+.score-status-table td {
+    border: 1px solid #d7dee6;
+    padding: 11px 9px;
+    color: #344054;
+    font-size: 13px;
+}
+
+.score-status-table tbody tr:nth-child(even) {
+    background: #f9fbfc;
+}
+
+.score-status-table tbody tr:hover {
+    background: #eef5f2;
+}
+
+.student-name {
+    color: #253858;
+    font-weight: 700;
+}
+
+.admission-number {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 3px 7px;
+    border-radius: 5px;
+    background: #eef3f8;
+    border: 1px solid #d7dee6;
+    color: #17365d;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 20px;
+    padding: 6px 10px;
+    font-size: 11px;
+    font-weight: 800;
+    border: 1px solid transparent;
+}
+
+.status-approved {
+    background: #e8f6ee;
+    color: #146c43;
+    border-color: #b9e2ca;
+}
+
+.status-submitted {
+    background: #fff8df;
+    color: #856404;
+    border-color: #ead58b;
+}
+
+.status-partial {
+    background: #eaf3ff;
+    color: #175a9b;
+    border-color: #bdd6f2;
+}
+
+.status-draft {
+    background: #f0f1f3;
+    color: #495057;
+    border-color: #d6d8db;
+}
+
+.status-other {
+    background: #fff0f1;
+    color: #842029;
+    border-color: #efb9be;
+}
+
+.score-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 35px;
+    padding: 7px 12px;
+    border-radius: 7px;
+    background: #198754;
+    border: 1px solid #198754;
+    color: #ffffff !important;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 800;
+    transition: .2s ease;
+}
+
+.score-action:hover {
+    background: #146c43;
+    border-color: #146c43;
+    transform: translateY(-1px);
+}
+
+.empty-state {
+    padding: 35px 20px;
+    text-align: center;
+    color: #667085;
+    font-size: 14px;
+}
+
+@media (max-width: 650px) {
+    .form-score-page {
+        padding-bottom: 20px;
+    }
+
+    .form-score-header {
+        padding: 21px 19px;
+        border-radius: 11px;
+    }
+
+    .form-score-header h1 {
+        font-size: 22px;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .students-card-header {
+        padding: 15px 16px;
+    }
+
+    .score-action {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+</style>
+
+<div class="form-score-page">
+
+    <div class="form-score-header">
+        <h1>Form Teacher Score Entry</h1>
+        <p>Manage student assessment scores for your assigned class.</p>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-card">
+            <span class="info-label">Class</span>
+            <span class="info-value">{{ class_level.name }}</span>
+        </div>
+
+        <div class="info-card">
+            <span class="info-label">Current Term</span>
+            <span class="info-value">{{ current_term }}</span>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="students-card">
+
+        <div class="students-card-header">
+            <h2>Students</h2>
+        </div>
+
+        {% if student_score_statuses %}
+
+            <div class="table-wrapper">
+
+                <table class="score-status-table">
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Student</th>
+                            <th>Score Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for item in student_score_statuses %}
+
+                            <tr>
+
+                                <td>
+                                    {{ forloop.counter }}
+                                </td>
+
+                                <td>
+                                    <div class="student-name">
+                                        {{ item.student.full_name }}
+                                    </div>
+
+                                    {% if item.student.admission_number %}
+                                        <span class="admission-number">
+                                            {{ item.student.admission_number }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+
+                                    {% if item.status_class == "approved" %}
+
+                                        <span class="status-badge status-approved">
+                                            ✓ Approved
+                                        </span>
+
+                                    {% elif item.status_class == "submitted" %}
+
+                                        <span class="status-badge status-submitted">
+                                            Submitted — Awaiting Approval
+                                        </span>
+
+                                    {% elif item.status_class == "partial" %}
+
+                                        <span class="status-badge status-partial">
+                                            Partially Submitted
+                                        </span>
+
+                                    {% elif item.status_class == "draft" %}
+
+                                        <span class="status-badge status-draft">
+                                            Draft Saved
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="status-badge status-other">
+                                            {{ item.status }}
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+
+                                    <a
+                                        href="{% url 'form_teacher_student_scores' class_level.id item.student.id %}"
+                                        class="score-action"
+                                    >
+                                        {% if item.status_class == "approved" %}
+                                            View Scores
+                                        {% else %}
+                                            Enter / View Scores
+                                        {% endif %}
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+                No active students are currently enrolled in this class.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

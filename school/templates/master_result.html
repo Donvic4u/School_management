@@ -1,0 +1,481 @@
+{% extends "school/base.html" %}
+{% load school_extras %}
+
+{% block content %}
+
+<style>
+    .master-page {
+        max-width: 1400px;
+        margin: 20px auto;
+        padding: 15px;
+        background: #fff;
+    }
+
+    .master-header {
+        text-align: center;
+        border-bottom: 3px solid #222;
+        padding-bottom: 12px;
+        margin-bottom: 15px;
+    }
+
+    .master-header h1 {
+        margin: 0;
+        font-size: 26px;
+        text-transform: uppercase;
+    }
+
+    .master-header h2 {
+        margin: 8px 0 0;
+        font-size: 20px;
+    }
+
+    .info {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 15px;
+        padding: 12px;
+        border: 1px solid #ccc;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .master-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1000px;
+        font-size: 12px;
+    }
+
+    .master-table th,
+    .master-table td {
+        border: 1px solid #555;
+        padding: 6px 5px;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .master-table th {
+        background: #eee;
+        font-weight: bold;
+    }
+
+    .master-table td.name {
+        text-align: left;
+        min-width: 180px;
+    }
+
+    .student-number {
+        width: 40px;
+    }
+
+    .summary-head {
+        background: #ddd !important;
+    }
+
+    .master-controls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+    }
+
+    .print-button,
+    .sms-class-button {
+        padding: 9px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .print-button {
+        background: #333;
+        color: #fff;
+    }
+
+    .sms-class-button {
+        background: #0b6b3a;
+        color: #fff;
+    }
+
+    .no-results {
+        text-align: center;
+        padding: 30px;
+        border: 1px solid #ccc;
+        margin-top: 20px;
+    }
+
+    .master-excel-button {
+    display: inline-block;
+    padding: 9px 16px;
+    background: #217346;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.master-excel-button:hover {
+    opacity: 0.9;
+}
+
+@media print {
+        body {
+            background: #fff !important;
+        }
+
+        .master-controls {
+            display: none;
+        }
+
+        .master-page {
+            margin: 0;
+            max-width: none;
+            padding: 0;
+        }
+
+        .master-table {
+            font-size: 9px;
+        }
+
+        @page {
+            size: landscape;
+            margin: 10mm;
+        }
+    }
+</style>
+
+<div class="master-page">
+
+    
+
+<div class="master-controls">
+
+    <button
+        type="button"
+        class="print-button"
+        onclick="window.print()"
+    >
+        🖨 PRINT MASTER RESULT
+    </button>
+
+    <button
+        type="button"
+        class="sms-class-button"
+        onclick="sendClassResultsSMS()"
+    >
+        📱 SEND CLASS RESULTS BY SMS
+    </button>
+
+    <a
+        href="{% url 'class_master_result_pdf' class_level.id %}"
+        target="_blank"
+        class="master-pdf-button"
+    >
+        📄 MASTER RESULT PDF
+    </a>
+
+    <a
+        href="{% url 'class_master_result_excel' class_level.id %}"
+        class="master-excel-button"
+    >
+        📊 EXPORT TO EXCEL
+    </a>
+
+</div>
+
+
+
+    <div class="master-header">
+
+        {% if school %}
+            <h1>{{ school.name }}</h1>
+
+            {% if school.address %}
+                <div>{{ school.address }}</div>
+            {% endif %}
+
+            {% if school.phone %}
+                <div>Tel: {{ school.phone }}</div>
+            {% endif %}
+
+            {% if school.email %}
+                <div>{{ school.email }}</div>
+            {% endif %}
+
+            {% if school.motto %}
+                <strong>{{ school.motto }}</strong>
+            {% endif %}
+        {% else %}
+            <h1>School Result</h1>
+        {% endif %}
+
+        <h2>CLASS MASTER RESULT</h2>
+
+    </div>
+
+
+    <div class="info">
+
+        <div>
+            <strong>Class:</strong>
+            {{ class_level.name }}
+        </div>
+
+        <div>
+            <strong>Session:</strong>
+            {{ current_term.session.name }}
+        </div>
+
+        <div>
+            <strong>Term:</strong>
+            {{ current_term.name }}
+        </div>
+
+        <div>
+            <strong>Students:</strong>
+            {{ students|length }}
+        </div>
+
+    </div>
+
+
+    {% if students %}
+
+    <div class="table-wrapper">
+
+        <table class="master-table">
+
+            <thead>
+
+                <tr>
+
+                    <th rowspan="2" class="student-number">
+                        No.
+                    </th>
+
+                    <th rowspan="2">
+                        Admission No.
+                    </th>
+
+                    <th rowspan="2">
+                        Student Name
+                    </th>
+
+                    {% for subject in subjects %}
+
+                        <th colspan="5">
+                            {{ subject.subject__name }}
+                        </th>
+
+                    {% endfor %}
+
+                    <th rowspan="2" class="summary-head">
+                        Total
+                    </th>
+
+                    <th rowspan="2" class="summary-head">
+                        Average
+                    </th>
+
+                    <th rowspan="2" class="summary-head">
+                        Grade
+                    </th>
+
+                    <th rowspan="2" class="summary-head">
+                        Position
+                    </th>
+
+                </tr>
+
+                <tr>
+
+                    {% for subject in subjects %}
+
+                        <th>CA1</th>
+                        <th>CA2</th>
+                        <th>CA3</th>
+                        <th>Exam</th>
+                        <th>Total</th>
+
+                    {% endfor %}
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for student in students %}
+
+                <tr>
+
+                    <td>
+                        {{ forloop.counter }}
+                    </td>
+
+                    <td>
+                        {{ student.student.admission_number }}
+                    </td>
+
+                    <td class="name">
+                        <strong>{{ student.student.full_name }}</strong>
+                    </td>
+
+
+                    {% for subject in subjects %}
+
+                        {% with row=student.subjects|get_item:subject.subject_id %}
+
+                            {% if row %}
+
+                                <td>{{ row.ca1 }}</td>
+                                <td>{{ row.ca2 }}</td>
+                                <td>{{ row.ca3 }}</td>
+                                <td>{{ row.exam }}</td>
+                                <td><strong>{{ row.total }}</strong></td>
+
+                            {% else %}
+
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+
+                            {% endif %}
+
+                        {% endwith %}
+
+                    {% endfor %}
+
+
+                    <td>
+                        <strong>{{ student.total_marks }}</strong>
+                    </td>
+
+                    <td>
+                        {{ student.average }}
+                    </td>
+
+                    <td>
+                        {{ student.overall_grade }}
+                    </td>
+
+                    <td>
+                        <strong>{{ student.position }}</strong>
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+        <div class="no-results">
+            No students or approved results are available for this class and term.
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<script>
+function sendClassResultsSMS() {
+
+    const students = [
+        {% for student in students %}
+        {
+            name: "{{ student.student.full_name|escapejs }}",
+            phone: "{{ student.student.phone_number|escapejs }}",
+            subjects: [
+                {% for subject in subjects %}
+                {% with row=student.subjects|get_item:subject.subject_id %}
+                {% if row %}
+                {
+                    name: "{{ subject.subject__name|escapejs }}",
+                    total: "{{ row.total|escapejs }}"
+                },
+                {% endif %}
+                {% endwith %}
+                {% endfor %}
+            ]
+        },
+        {% endfor %}
+    ];
+
+    const studentsWithPhone = students.filter(
+        student => student.phone.trim() !== ""
+    );
+
+    if (studentsWithPhone.length === 0) {
+        alert(
+            "No student or parent/guardian phone numbers are saved " +
+            "for this class."
+        );
+        return;
+    }
+
+    let index = 0;
+
+    function openNextSMS() {
+
+        if (index >= studentsWithPhone.length) {
+            alert("All available class SMS messages have been prepared.");
+            return;
+        }
+
+        const student = studentsWithPhone[index];
+
+        const lines = [
+            "RESULT — " + student.name
+        ];
+
+        student.subjects.forEach(function(subject) {
+            lines.push(
+                subject.name + ": " + subject.total
+            );
+        });
+
+        const message = lines.join(String.fromCharCode(10));
+
+        const smsUrl =
+            "sms:" +
+            student.phone +
+            "?body=" +
+            encodeURIComponent(message);
+
+        index += 1;
+
+        window.location.href = smsUrl;
+
+        setTimeout(function() {
+            if (
+                confirm(
+                    "SMS prepared for " +
+                    student.name +
+                    ". Continue to the next student?"
+                )
+            ) {
+                openNextSMS();
+            }
+        }, 1500);
+    }
+
+    openNextSMS();
+}
+</script>
+
+{% endblock %}

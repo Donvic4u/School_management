@@ -1,0 +1,248 @@
+{% extends "school/base.html" %}
+{% load school_extras %}
+
+{% block content %}
+
+<div style="max-width:900px; margin:30px auto; padding:0 15px;">
+
+    <h2 style="margin-bottom:8px;">
+        Form Teacher Comments
+    </h2>
+
+    <p style="margin-top:0; color:#555;">
+        Manage comments for one student.
+    </p>
+
+    <div style="
+        background:#f5f7f8;
+        border:1px solid #d9dee2;
+        border-radius:8px;
+        padding:18px;
+        margin:20px 0;
+    ">
+
+        <p>
+            <strong>Student:</strong>
+            {{ student.full_name }}
+        </p>
+
+        <p>
+            <strong>Admission Number:</strong>
+            {{ student.admission_number }}
+        </p>
+
+        <p>
+            <strong>Class:</strong>
+            {{ class_level.name }}
+        </p>
+
+        <p>
+            <strong>Form Teacher:</strong>
+            {{ teacher.full_name }}
+        </p>
+
+        <p>
+            <strong>Term:</strong>
+            {{ current_term.name }}
+        </p>
+
+        <p>
+            <strong>Session:</strong>
+            {{ current_term.session.name }}
+        </p>
+
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div style="
+                padding:12px;
+                margin-bottom:10px;
+                border-radius:6px;
+                background:#eef7ee;
+                border:1px solid #b7d8b7;
+            ">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div style="
+            border:1px solid #d9dee2;
+            border-radius:8px;
+            padding:20px;
+            margin-bottom:20px;
+        ">
+
+            <h3 style="margin-top:0;">
+                Academic Performance
+            </h3>
+
+            <p>
+                <strong>Overall Grade:</strong>
+                {% if academic_grade %}
+                    {{ academic_grade }}
+                {% else %}
+                    Not yet available
+                {% endif %}
+            </p>
+
+            <label
+                for="academic_comment"
+                style="
+                    display:block;
+                    font-weight:bold;
+                    margin:15px 0 7px;
+                "
+            >
+                Principal's Overall Comment
+            </label>
+
+            <select
+                id="academic_comment"
+                name="academic_comment"
+                style="
+                    width:100%;
+                    padding:11px;
+                    border:1px solid #bbb;
+                    border-radius:5px;
+                    box-sizing:border-box;
+                "
+            >
+                <option value="">
+                    -- Select Academic Comment --
+                </option>
+
+                {% for value, label in academic_comment_choices %}
+                    <option
+                        value="{{ value }}"
+                        {% if enrollment.academic_performance_comment == value %}
+                            selected
+                        {% elif not enrollment.academic_performance_comment and academic_grade == value %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ value }} — {{ label }}
+                    </option>
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <div style="
+            border:1px solid #d9dee2;
+            border-radius:8px;
+            padding:20px;
+            margin-bottom:20px;
+        ">
+
+            <h3 style="margin-top:0;">
+                Behaviour / Conduct
+            </h3>
+
+            <label
+                for="behaviour_comment"
+                style="
+                    display:block;
+                    font-weight:bold;
+                    margin:15px 0 7px;
+                "
+            >
+                Behaviour Comment
+            </label>
+
+            <select
+                id="behaviour_comment"
+                name="behaviour_comment"
+                style="
+                    width:100%;
+                    padding:11px;
+                    border:1px solid #bbb;
+                    border-radius:5px;
+                    box-sizing:border-box;
+                "
+            >
+                <option value="">
+                    -- Select Behaviour Comment --
+                </option>
+
+                {% for value, label in comment_choices %}
+                    <option
+                        value="{{ value }}"
+                        {% if enrollment.form_teacher_comment == value %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ label }}
+                    </option>
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <div style="
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+            margin-top:20px;
+        ">
+
+            <button
+                type="submit"
+                style="
+                    padding:12px 20px;
+                    border:0;
+                    border-radius:6px;
+                    background:#198754;
+                    color:white;
+                    font-weight:bold;
+                    cursor:pointer;
+                "
+            >
+                SAVE COMMENTS
+            </button>
+
+            <a
+                href="{% url 'form_teacher_student_scores' class_level.id student.id %}"
+                style="
+                    display:inline-block;
+                    padding:12px 20px;
+                    border-radius:6px;
+                    background:#6c757d;
+                    color:white;
+                    text-decoration:none;
+                    font-weight:bold;
+                "
+            >
+                ← BACK TO SCORES
+            </a>
+
+            <a
+                href="{% url 'form_teacher_score_entry' class_level.id %}"
+                style="
+                    display:inline-block;
+                    padding:12px 20px;
+                    border-radius:6px;
+                    background:#0d6efd;
+                    color:white;
+                    text-decoration:none;
+                    font-weight:bold;
+                "
+            >
+                ← BACK TO STUDENTS
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

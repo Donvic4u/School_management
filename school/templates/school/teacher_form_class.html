@@ -1,0 +1,253 @@
+{% extends "school/base.html" %}
+
+{% block title %}Assign Form Teacher Class{% endblock %}
+
+{% block content %}
+
+<style>
+    .assignment-page {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .page-header {
+        margin-bottom: 20px;
+    }
+
+    .page-header h2 {
+        margin-bottom: 6px;
+    }
+
+    .page-header p {
+        margin: 0;
+        color: #666;
+    }
+
+    .assignment-section {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 18px;
+    }
+
+    .teacher-info {
+        background: #f7f7f7;
+        border-radius: 8px;
+        padding: 14px;
+        margin-bottom: 20px;
+    }
+
+    .teacher-info strong {
+        display: block;
+        font-size: 17px;
+        margin-bottom: 4px;
+    }
+
+    .teacher-info span {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .current-assignment {
+        margin-bottom: 20px;
+        padding: 14px;
+        border-radius: 8px;
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .not-assigned {
+        margin-bottom: 20px;
+        padding: 14px;
+        border-radius: 8px;
+        background: #fff3e0;
+        color: #e65100;
+    }
+
+    .form-field {
+        margin-bottom: 18px;
+    }
+
+    .form-field label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 7px;
+    }
+
+    .form-field select {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 11px 12px;
+        border: 1px solid #ccc;
+        border-radius: 7px;
+        background: #fff;
+        font-size: 15px;
+    }
+
+    .form-field select:focus {
+        outline: none;
+        border-color: #555;
+    }
+
+    .help-text {
+        color: #777;
+        font-size: 13px;
+        margin-top: 6px;
+        line-height: 1.5;
+    }
+
+    .warning {
+        background: #f7f7f7;
+        border-radius: 8px;
+        padding: 14px;
+        color: #555;
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+    }
+
+    @media (max-width: 650px) {
+        .assignment-section {
+            padding: 16px;
+        }
+    }
+</style>
+
+<div class="assignment-page">
+
+    <div class="page-header">
+
+        <h2>Assign Form Teacher Class</h2>
+
+        <p>
+            Choose the class for which this teacher will be the
+            Form Teacher.
+        </p>
+
+    </div>
+
+    <div class="assignment-section">
+
+        <div class="teacher-info">
+
+            <strong>
+                {{ teacher.full_name }}
+            </strong>
+
+            <span>
+                Staff ID: {{ teacher.staff_id }}
+            </span>
+
+        </div>
+
+        {% if current_class %}
+
+            <div class="current-assignment">
+
+                <strong>Current Assignment</strong>
+
+                <br>
+
+                {{ teacher.full_name }} is currently the
+                Form Teacher for
+                <strong>{{ current_class.name }}</strong>.
+
+            </div>
+
+        {% else %}
+
+            <div class="not-assigned">
+
+                <strong>Not Assigned</strong>
+
+                <br>
+
+                This teacher is not currently assigned as
+                Form Teacher of any class.
+
+            </div>
+
+        {% endif %}
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div class="form-field">
+
+                <label for="class_level">
+                    Form Teacher Class
+                </label>
+
+                <select
+                    id="class_level"
+                    name="class_level"
+                >
+
+                    <option value="">
+                        Not Assigned
+                    </option>
+
+                    {% for class in classes %}
+
+                        <option
+                            value="{{ class.id }}"
+                            {% if current_class and current_class.id == class.id %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ class.name }}
+                            {% if class.form_teacher and class.form_teacher.id != teacher.id %}
+                                — Assigned to {{ class.form_teacher.full_name }}
+                            {% endif %}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+                <div class="help-text">
+                    A teacher can be Form Teacher of only one class.
+                    Select "Not Assigned" to remove the current
+                    Form Teacher assignment.
+                </div>
+
+            </div>
+
+            <div class="warning">
+                <strong>Important:</strong>
+                This assignment controls which class appears on the
+                teacher's Form Teacher dashboard. The teacher may
+                still teach subjects in other classes.
+            </div>
+
+            <div class="form-actions">
+
+                <button type="submit">
+                    Save Form Teacher Assignment
+                </button>
+
+                <a
+                    class="button secondary"
+                    href="{% url 'teacher_list' %}"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

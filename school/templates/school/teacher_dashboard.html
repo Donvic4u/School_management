@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Teacher Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .topbar {
+            background: #17365d;
+            color: white;
+            padding: 16px 20px;
+        }
+
+        .topbar-inner {
+            max-width: 1100px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .school-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .dashboard-title {
+            font-size: 13px;
+            opacity: 0.85;
+            margin-top: 3px;
+        }
+
+        .logout {
+            display: inline-block;
+            background: #dc3545;
+            color: white;
+            text-decoration: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 25px auto;
+            padding: 0 15px;
+        }
+
+        .welcome {
+            background: white;
+            border-radius: 10px;
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+
+        .welcome h1 {
+            margin: 0 0 8px;
+            font-size: 25px;
+            color: #17365d;
+        }
+
+        .teacher-info {
+            color: #555;
+            font-size: 15px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 25px 0 12px;
+            color: #17365d;
+        }
+
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(320px, 1fr)
+            );
+            gap: 18px;
+        }
+
+        .class-card {
+            background: white;
+            border-radius: 10px;
+            padding: 22px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            border-top: 4px solid #17365d;
+        }
+
+        .class-name {
+            font-size: 25px;
+            font-weight: bold;
+            color: #17365d;
+            margin-bottom: 5px;
+        }
+
+        .class-label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 18px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 9px;
+            margin-bottom: 18px;
+        }
+
+        .stat {
+            background: #f4f7fb;
+            border-radius: 7px;
+            padding: 11px;
+            border: 1px solid #e4e8ed;
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 20px;
+            font-weight: bold;
+            color: #17365d;
+            margin-bottom: 3px;
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 11px;
+            color: #666;
+            line-height: 1.25;
+        }
+
+        .status-note {
+            background: #eef4fb;
+            border-radius: 7px;
+            padding: 10px 12px;
+            margin-bottom: 18px;
+            font-size: 12px;
+            color: #555;
+            line-height: 1.45;
+        }
+
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .button {
+            display: block;
+            width: 100%;
+            text-align: center;
+            padding: 13px 15px;
+            border-radius: 7px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .scores {
+            background: #17365d;
+            color: white;
+        }
+
+        .comments {
+            background: #198754;
+            color: white;
+        }
+
+        .button:hover {
+            opacity: 0.9;
+        }
+
+        .empty {
+            background: white;
+            border-radius: 10px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+
+        .empty h2 {
+            color: #17365d;
+            margin-top: 0;
+        }
+
+        .empty p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .notice {
+            background: #fff3cd;
+            border: 1px solid #ffecb5;
+            color: #664d03;
+            padding: 12px 15px;
+            border-radius: 7px;
+            margin-top: 18px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+            .topbar-inner {
+                align-items: flex-start;
+            }
+
+            .school-title {
+                font-size: 17px;
+            }
+
+            .logout {
+                padding: 9px 12px;
+                font-size: 13px;
+            }
+
+            .welcome h1 {
+                font-size: 21px;
+            }
+
+            .class-name {
+                font-size: 22px;
+            }
+
+            .class-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    
+        .student-search-box {
+            background: white;
+            border-radius: 10px;
+            padding: 18px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+
+        .student-search-box label {
+            display: block;
+            font-weight: bold;
+            color: #17365d;
+            margin-bottom: 8px;
+        }
+
+        .student-search-box input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        .student-search-count {
+            margin-top: 8px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .student-list {
+            margin-top: 15px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .student-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 14px;
+        }
+
+        .student-name {
+            font-weight: bold;
+            color: #17365d;
+            font-size: 16px;
+        }
+
+        .student-meta {
+            margin-top: 5px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .no-student-results {
+            display: none;
+            padding: 14px;
+            margin-top: 10px;
+            background: #fff7ed;
+            border-radius: 8px;
+            color: #9a3412;
+            font-size: 14px;
+        }
+
+</style>
+</head>
+
+<body>
+
+    <div class="topbar">
+        <div class="topbar-inner">
+
+            <div>
+                <div class="school-title">
+                    ROCK FOUNDATION ACADEMY AND COLLEGE
+                </div>
+
+                <div class="dashboard-title">
+                    FORM TEACHER DASHBOARD
+                </div>
+            </div>
+
+            <a href="{% url 'teacher_logout' %}" class="logout">
+                Logout
+            </a>
+
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="welcome">
+
+            <h1>
+                Welcome, {{ teacher.full_name }}
+            </h1>
+
+            <div class="teacher-info">
+                Staff ID:
+                <strong>{{ teacher.staff_id }}</strong>
+            </div>
+
+        </div>
+
+        <div class="section-title">
+            Your Assigned Class
+        </div>
+
+        {% if class_status %}
+
+            <div class="student-search-box">
+                <label for="studentSearch">Search Students</label>
+
+                <input
+                    type="text"
+                    id="studentSearch"
+                    placeholder="Search by student name or admission number..."
+                    autocomplete="off"
+                >
+
+                <div class="student-search-count" id="studentSearchCount">
+                    Showing all students
+                </div>
+
+                <div class="student-list" id="studentList">
+                    {% for item in class_status %}
+                        {% for student in item.students %}
+                            <div
+                                class="student-card"
+                                data-search-name="{{ student.full_name|lower }}"
+                                data-search-admission="{{ student.admission_number|lower }}"
+                            >
+                                <div class="student-name">
+                                    {{ student.full_name }}
+                                </div>
+
+                                <div class="student-meta">
+                                    Admission No: {{ student.admission_number }}
+                                    {% if student.gender %}
+                                        &nbsp; | &nbsp; Gender: {{ student.gender }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+
+                <div class="no-student-results" id="noStudentResults">
+                    No student matches your search.
+                </div>
+            </div>
+
+
+            <div class="class-grid">
+
+                {% for item in class_status %}
+
+                    <div class="class-card">
+
+                        <div class="class-name">
+                            {{ item.class_level.name }}
+                        </div>
+
+                        <div class="class-label">
+                            Form Teacher
+                        </div>
+
+                        <div class="stats">
+
+                            <div class="stat">
+                                <span class="stat-number">
+                                    {{ item.student_count }}
+                                </span>
+                                <span class="stat-label">
+                                    Students
+                                </span>
+                            </div>
+
+                            <div class="stat">
+                                <span class="stat-number">
+                                    {{ item.subject_count }}
+                                </span>
+                                <span class="stat-label">
+                                    Assigned Subjects
+                                </span>
+                            </div>
+
+                            <div class="stat">
+                                <span class="stat-number">
+                                    {{ item.students_with_scores }}
+                                </span>
+                                <span class="stat-label">
+                                    Complete Scores
+                                </span>
+                            </div>
+
+                            <div class="stat">
+                                <span class="stat-number">
+                                    {{ item.students_submitted }}
+                                </span>
+                                <span class="stat-label">
+                                    Fully Submitted
+                                </span>
+                            </div>
+
+                            <div class="stat">
+                                <span class="stat-number">
+                                    {{ item.students_approved }}
+                                </span>
+                                <span class="stat-label">
+                                    Fully Approved
+                                </span>
+                            </div>
+
+                            <div class="stat">
+                                <span class="stat-number">
+                                    {{ item.students_pending }}
+                                </span>
+                                <span class="stat-label">
+                                    Pending Approval
+                                </span>
+                            </div>
+
+                            <div class="stat">
+                                <span class="stat-number">
+                                    {{ item.students_with_comments }}
+                                </span>
+                                <span class="stat-label">
+                                    Comments Complete
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <div class="status-note">
+                            Complete Scores means all active subjects for
+                            the class have score records for the student.
+                            Fully Submitted means all those scores have
+                            been submitted. Fully Approved means all have
+                            been approved by the administrator.
+                        </div>
+
+                        <div class="actions">
+
+                            <a
+                                href="{% url 'form_teacher_score_entry' item.class_level.id %}"
+                                class="button scores"
+                            >
+                                ENTER ALL CLASS SCORES
+                            </a>
+
+                            <a
+                                href="{% url 'teacher_add_student' %}"
+                                class="button comments"
+                            >
+                                ADD STUDENT
+                            </a>
+
+                            <a
+                                href="{% url 'form_teacher_comments' item.class_level.id %}"
+                                class="button comments"
+                            >
+                                MANAGE BEHAVIOUR &amp; ACADEMIC COMMENTS
+                            </a>
+
+                            <a
+                                href="{% url 'teacher_attendance' %}"
+                                class="button comments"
+                            >
+                                DAILY ATTENDANCE
+                            </a>
+
+                            <a
+                                href="{% url 'teacher_attendance_history' %}"
+                                class="button scores"
+                            >
+                                ATTENDANCE HISTORY
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty">
+
+                <h2>No Form Teacher Class Assigned</h2>
+
+                <p>
+                    You currently do not have a class assigned to you as
+                    Form Teacher.
+                </p>
+
+                <div class="notice">
+                    Please contact the school administrator to have a
+                    Form Teacher class assigned to your account.
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("studentSearch");
+    const studentCards = Array.from(
+        document.querySelectorAll(".student-card")
+    );
+    const countLabel = document.getElementById("studentSearchCount");
+    const noResults = document.getElementById("noStudentResults");
+
+    if (!searchInput) {
+        return;
+    }
+
+    function filterStudents() {
+        const query = searchInput.value.trim().toLowerCase();
+        let visibleCount = 0;
+
+        studentCards.forEach(function (card) {
+            const name = card.dataset.searchName || "";
+            const admission = card.dataset.searchAdmission || "";
+
+            const matches =
+                query === "" ||
+                name.includes(query) ||
+                admission.includes(query);
+
+            card.style.display = matches ? "" : "none";
+
+            if (matches) {
+                visibleCount++;
+            }
+        });
+
+        if (query === "") {
+            countLabel.textContent =
+                "Showing all " + studentCards.length + " students";
+        } else {
+            countLabel.textContent =
+                "Showing " + visibleCount + " student" +
+                (visibleCount === 1 ? "" : "s");
+        }
+
+        noResults.style.display =
+            visibleCount === 0 ? "block" : "none";
+    }
+
+    searchInput.addEventListener("input", filterStudents);
+
+    countLabel.textContent =
+        "Showing all " + studentCards.length + " students";
+});
+</script>
+
+</body>
+</html>

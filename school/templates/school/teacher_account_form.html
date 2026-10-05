@@ -1,0 +1,289 @@
+{% extends "school/base.html" %}
+
+{% block title %}Teacher Login Account{% endblock %}
+
+{% block content %}
+
+<style>
+    .account-page {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .page-header {
+        margin-bottom: 20px;
+    }
+
+    .page-header h2 {
+        margin-bottom: 6px;
+    }
+
+    .page-header p {
+        margin: 0;
+        color: #666;
+    }
+
+    .account-section {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 18px;
+    }
+
+    .account-section h3 {
+        margin-top: 0;
+        margin-bottom: 8px;
+    }
+
+    .teacher-info {
+        background: #f7f7f7;
+        border-radius: 8px;
+        padding: 14px;
+        margin-bottom: 20px;
+    }
+
+    .teacher-info strong {
+        display: block;
+        font-size: 17px;
+        margin-bottom: 4px;
+    }
+
+    .teacher-info span {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .form-field {
+        margin-bottom: 16px;
+    }
+
+    .form-field label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    .form-field input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 11px 12px;
+        border: 1px solid #ccc;
+        border-radius: 7px;
+        font-size: 15px;
+    }
+
+    .form-field input:focus {
+        outline: none;
+        border-color: #555;
+    }
+
+    .help-text {
+        color: #777;
+        font-size: 13px;
+        margin-top: 5px;
+    }
+
+    .account-status {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .new-account {
+        background: #fff3e0;
+        color: #e65100;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+    }
+
+    .security-note {
+        background: #f7f7f7;
+        border-radius: 8px;
+        padding: 14px;
+        color: #555;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .error-list {
+        background: #ffebee;
+        border-radius: 8px;
+        padding: 12px 15px;
+        color: #b00020;
+        margin-bottom: 18px;
+    }
+
+    .error-list ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    @media (max-width: 650px) {
+        .account-section {
+            padding: 16px;
+        }
+    }
+</style>
+
+<div class="account-page">
+
+    <div class="page-header">
+
+        {% if account %}
+            <h2>Manage Teacher Login</h2>
+            <p>Update the login account for this teacher.</p>
+        {% else %}
+            <h2>Create Teacher Login</h2>
+            <p>Create the account the teacher will use to access the system.</p>
+        {% endif %}
+
+    </div>
+
+    <div class="account-section">
+
+        <div class="teacher-info">
+            <strong>{{ teacher.full_name }}</strong>
+            <span>Staff ID: {{ teacher.staff_id }}</span>
+        </div>
+
+        {% if account %}
+            <div style="margin-bottom: 18px;">
+                <span class="account-status">
+                    Login Account Exists
+                </span>
+            </div>
+        {% else %}
+            <div style="margin-bottom: 18px;">
+                <span class="account-status new-account">
+                    No Login Account Yet
+                </span>
+            </div>
+        {% endif %}
+
+        {% if messages %}
+
+            <div class="error-list">
+                <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+        {% endif %}
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div class="form-field">
+
+                <label for="username">
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    value="{% if account %}{{ account.user.username }}{% endif %}"
+                    placeholder="Enter login username"
+                    autocomplete="username"
+                    required
+                >
+
+                <div class="help-text">
+                    This is the username the teacher will use on the
+                    Form Teacher Login page.
+                </div>
+
+            </div>
+
+            <div class="form-field">
+
+                <label for="password">
+                    {% if account %}
+                        New Password
+                    {% else %}
+                        Password
+                    {% endif %}
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="{% if account %}Leave blank to keep current password{% else %}Enter password{% endif %}"
+                    autocomplete="{% if account %}new-password{% else %}new-password{% endif %}"
+                    {% if not account %}required{% endif %}
+                >
+
+                {% if account %}
+                    <div class="help-text">
+                        Leave this blank if you do not want to change
+                        the existing password.
+                    </div>
+                {% endif %}
+
+            </div>
+
+            <div class="form-field">
+
+                <label for="confirm_password">
+                    Confirm Password
+                </label>
+
+                <input
+                    type="password"
+                    id="confirm_password"
+                    name="confirm_password"
+                    placeholder="Confirm password"
+                    autocomplete="new-password"
+                    {% if not account %}required{% endif %}
+                >
+
+            </div>
+
+            <div class="security-note">
+                <strong>Important:</strong>
+                Give the teacher their username and password securely.
+                The password is stored using Django's password hashing
+                system and is not stored as plain text.
+            </div>
+
+            <div class="form-actions">
+
+                <button type="submit">
+                    {% if account %}
+                        Save Login Changes
+                    {% else %}
+                        Create Login Account
+                    {% endif %}
+                </button>
+
+                <a
+                    class="button secondary"
+                    href="{% url 'teacher_list' %}"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

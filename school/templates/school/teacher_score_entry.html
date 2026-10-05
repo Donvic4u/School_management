@@ -1,0 +1,400 @@
+{% extends "school/base.html" %}
+{% load school_extras %}
+
+{% block content %}
+
+<div class="container">
+
+    <h2>Teacher Score Entry</h2>
+
+    <p>
+        <strong>Teacher:</strong>
+        {{ teacher.full_name }}
+    </p>
+
+    <p>
+        <strong>Class:</strong>
+        {{ assignment.class_level.name }}
+    </p>
+
+    <p>
+        <strong>Subject:</strong>
+        {{ assignment.subject.name }}
+    </p>
+
+    <p>
+        <strong>Term:</strong>
+        {{ current_term }}
+    </p>
+
+    <p>
+        <a href="{% url 'teacher_dashboard' %}">
+            ← Back to Teacher Dashboard
+        </a>
+    </p>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div style="
+                padding:10px;
+                margin:10px 0;
+                border:1px solid #ccc;
+            ">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+
+    {% if all_approved %}
+
+        <div style="
+            padding:15px;
+            margin:15px 0;
+            border:2px solid #444;
+        ">
+            <strong>🔒 SCORES LOCKED</strong>
+            <br>
+            These scores have been approved by the administrator
+            and can no longer be edited.
+        </div>
+
+    {% elif all_submitted %}
+
+        <div style="
+            padding:15px;
+            margin:15px 0;
+            border:2px solid #444;
+        ">
+            <strong>SUBMITTED FOR APPROVAL</strong>
+            <br>
+            These scores have been submitted and are awaiting
+            administrator approval.
+        </div>
+
+    {% endif %}
+
+
+    {% if enrollments %}
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div style="overflow-x:auto;">
+
+                <table
+                    border="1"
+                    cellpadding="8"
+                    cellspacing="0"
+                    style="
+                        width:100%;
+                        border-collapse:collapse;
+                    "
+                >
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Admission No.</th>
+                            <th>Student</th>
+                            <th>CA1 /10</th>
+                            <th>CA2 /10</th>
+                            <th>CA3 /10</th>
+                            <th>CA /30</th>
+                            <th>Exam /70</th>
+                            <th>Total /100</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for enrollment in enrollments %}
+
+                        {% with score=score_data|get_item:enrollment.id %}
+
+                        <tr>
+
+                            <td>
+                                {{ forloop.counter }}
+                            </td>
+
+                            <td>
+                                {{ enrollment.student.admission_number }}
+                            </td>
+
+                            <td>
+                                {{ enrollment.student.full_name }}
+                            </td>
+
+                            <td>
+                                <input
+                                    type="number"
+                                    name="student_{{ enrollment.id }}_ca1"
+                                    data-row="{{ enrollment.id }}"
+                                    class="teacher-score-input"
+                                    min="0"
+                                    max="10"
+                                    step="0.01"
+                                    value="{% if score %}{{ score.ca1_score }}{% else %}0{% endif %}"
+                                    {% if score and score.submitted or score and score.approved %}disabled{% endif %}
+                                    style="width:70px;"
+                                >
+                            </td>
+
+                            <td>
+                                <input
+                                    type="number"
+                                    name="student_{{ enrollment.id }}_ca2"
+                                    data-row="{{ enrollment.id }}"
+                                    class="teacher-score-input"
+                                    min="0"
+                                    max="10"
+                                    step="0.01"
+                                    value="{% if score %}{{ score.ca2_score }}{% else %}0{% endif %}"
+                                    {% if score and score.submitted or score and score.approved %}disabled{% endif %}
+                                    style="width:70px;"
+                                >
+                            </td>
+
+                            <td>
+                                <input
+                                    type="number"
+                                    name="student_{{ enrollment.id }}_ca3"
+                                    data-row="{{ enrollment.id }}"
+                                    class="teacher-score-input"
+                                    min="0"
+                                    max="10"
+                                    step="0.01"
+                                    value="{% if score %}{{ score.ca3_score }}{% else %}0{% endif %}"
+                                    {% if score and score.submitted or score and score.approved %}disabled{% endif %}
+                                    style="width:70px;"
+                                >
+                            </td>
+
+                            <td>
+                                <strong>
+                                    <span id="ca_{{ enrollment.id }}">
+                                        {% if score %}
+                                            {{ score.ca_total }}
+                                        {% else %}
+                                            0
+                                        {% endif %}
+                                    </span>
+                                </strong>
+                            </td>
+
+                            <td>
+                                <input
+                                    type="number"
+                                    name="student_{{ enrollment.id }}_exam"
+                                    data-row="{{ enrollment.id }}"
+                                    class="teacher-score-input"
+                                    min="0"
+                                    max="70"
+                                    step="0.01"
+                                    value="{% if score %}{{ score.exam_score }}{% else %}0{% endif %}"
+                                    {% if score and score.submitted or score and score.approved %}disabled{% endif %}
+                                    style="width:70px;"
+                                >
+                            </td>
+
+                            <td>
+                                <strong>
+                                    <span id="total_{{ enrollment.id }}">
+                                        {% if score %}
+                                            {{ score.total }}
+                                        {% else %}
+                                            0
+                                        {% endif %}
+                                    </span>
+                                </strong>
+                            </td>
+
+                            <td>
+
+                                {% if score and score.approved %}
+
+                                    🔒 Approved
+
+                                {% elif score and score.submitted %}
+
+                                    Submitted
+
+                                {% else %}
+
+                                    Draft
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% endwith %}
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            {% if not all_approved %}
+
+                <br>
+
+                {% if not all_submitted %}
+
+                    <button
+                        type="submit"
+                        name="action"
+                        value="save"
+                    >
+                        Save Draft
+                    </button>
+
+                    {% if has_scores %}
+
+                        <button
+                            type="submit"
+                            name="action"
+                            value="submit"
+                            style="margin-left:10px;"
+                            onclick="return confirm(
+                                'Submit these scores for administrator approval?'
+                            );"
+                        >
+                            Submit for Approval
+                        </button>
+
+                    {% endif %}
+
+                {% endif %}
+
+            {% endif %}
+
+        </form>
+
+    {% else %}
+
+        <p>
+            No students are enrolled in this class for the current term.
+        </p>
+
+    {% endif %}
+
+</div>
+
+
+<script>
+
+function getScoreValue(selector) {
+
+    const element =
+        document.querySelector(selector);
+
+    if (!element) {
+        return 0;
+    }
+
+    const value =
+        parseFloat(element.value);
+
+    return isNaN(value) ? 0 : value;
+}
+
+
+function updateStudentTotal(rowId) {
+
+    const ca1 =
+        getScoreValue(
+            'input[name="student_' +
+            rowId +
+            '_ca1"]'
+        );
+
+    const ca2 =
+        getScoreValue(
+            'input[name="student_' +
+            rowId +
+            '_ca2"]'
+        );
+
+    const ca3 =
+        getScoreValue(
+            'input[name="student_' +
+            rowId +
+            '_ca3"]'
+        );
+
+    const exam =
+        getScoreValue(
+            'input[name="student_' +
+            rowId +
+            '_exam"]'
+        );
+
+    const caTotal =
+        ca1 + ca2 + ca3;
+
+    const total =
+        caTotal + exam;
+
+    const caElement =
+        document.getElementById(
+            'ca_' + rowId
+        );
+
+    const totalElement =
+        document.getElementById(
+            'total_' + rowId
+        );
+
+    if (caElement) {
+        caElement.textContent =
+            caTotal.toFixed(2);
+    }
+
+    if (totalElement) {
+        totalElement.textContent =
+            total.toFixed(2);
+    }
+}
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        const inputs =
+            document.querySelectorAll(
+                ".teacher-score-input"
+            );
+
+        inputs.forEach(function(input) {
+
+            input.addEventListener(
+                "input",
+                function() {
+
+                    const rowId =
+                        this.getAttribute(
+                            "data-row"
+                        );
+
+                    updateStudentTotal(rowId);
+                }
+            );
+
+        });
+
+    }
+);
+
+</script>
+
+{% endblock %}

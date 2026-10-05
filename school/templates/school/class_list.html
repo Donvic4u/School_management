@@ -1,0 +1,309 @@
+{% extends "school/base.html" %}
+
+{% block title %}Form Teacher Assignment{% endblock %}
+
+{% block content %}
+
+
+<style id="class-list-final-ui">
+    .class-management-card {
+        border: 1px solid #e3e8ee;
+        border-radius: 10px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .class-management-card table tbody tr {
+        transition: background 0.15s ease;
+    }
+
+    .class-management-card table tbody tr:hover {
+        background: #f8fbff;
+    }
+
+    .class-management-card select {
+        transition:
+            border-color 0.15s ease,
+            box-shadow 0.15s ease;
+    }
+
+    .class-management-card select:focus {
+        border-color: #2563eb !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        outline: none;
+    }
+
+    .class-management-card button[type="submit"] {
+        transition:
+            transform 0.15s ease,
+            opacity 0.15s ease,
+            box-shadow 0.15s ease;
+        box-shadow: 0 2px 5px rgba(37, 99, 235, 0.18);
+    }
+
+    .class-management-card button[type="submit"]:hover {
+        transform: translateY(-1px);
+        opacity: 0.92;
+        box-shadow: 0 4px 9px rgba(37, 99, 235, 0.22);
+    }
+
+    @media (max-width: 700px) {
+        .class-management-card {
+            border-radius: 8px;
+        }
+
+        .class-management-card button[type="submit"] {
+            width: 100%;
+            min-height: 42px;
+        }
+    }
+</style>
+
+<div class="card class-management-card">
+
+    <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:16px;
+        flex-wrap:wrap;
+        margin-bottom:20px;
+    ">
+
+        <div>
+            <h2 style="margin:0 0 6px 0;">
+                Form Teacher Assignment
+            </h2>
+
+            <p style="margin:0; color:#666;">
+                Assign or change Form Teachers for all classes from one screen.
+            </p>
+        </div>
+
+        <div style="
+            background:#f5f7fa;
+            padding:10px 14px;
+            border-radius:8px;
+            font-size:14px;
+            color:#555;
+        ">
+            {{ classes|length }} Classes
+        </div>
+
+    </div>
+
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <div style="
+            overflow-x:auto;
+            border:1px solid #e5e7eb;
+            border-radius:10px;
+        ">
+
+            <table style="
+                width:100%;
+                border-collapse:collapse;
+                min-width:700px;
+            ">
+
+                <thead>
+
+                    <tr style="background:#f8fafc;">
+
+                        <th style="
+                            padding:14px 16px;
+                            text-align:left;
+                            border-bottom:1px solid #e5e7eb;
+                        ">
+                            CLASS
+                        </th>
+
+                        <th style="
+                            padding:14px 16px;
+                            text-align:left;
+                            border-bottom:1px solid #e5e7eb;
+                        ">
+                            FORM TEACHER
+                        </th>
+
+                        <th style="
+                            padding:14px 16px;
+                            text-align:left;
+                            border-bottom:1px solid #e5e7eb;
+                        ">
+                            STATUS
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for class in classes %}
+
+                    <tr>
+
+                        <td style="
+                            padding:14px 16px;
+                            border-bottom:1px solid #f0f0f0;
+                            font-weight:600;
+                            white-space:nowrap;
+                        ">
+                            {{ class.name }}
+                        </td>
+
+
+                        <td style="
+                            padding:10px 16px;
+                            border-bottom:1px solid #f0f0f0;
+                        ">
+
+                            <select
+                                name="teacher_{{ class.id }}"
+                                style="
+                                    width:100%;
+                                    min-width:260px;
+                                    padding:10px 12px;
+                                    border:1px solid #d1d5db;
+                                    border-radius:7px;
+                                    background:white;
+                                    font-size:14px;
+                                "
+                            >
+
+                                <option value="">
+                                    Not Assigned
+                                </option>
+
+                                {% for teacher in active_teachers %}
+
+                                    <option
+                                        value="{{ teacher.id }}"
+                                        {% if class.form_teacher_id == teacher.id %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        {{ teacher.full_name }}
+                                    </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </td>
+
+
+                        <td style="
+                            padding:14px 16px;
+                            border-bottom:1px solid #f0f0f0;
+                            white-space:nowrap;
+                        ">
+
+                            {% if class.form_teacher %}
+
+                                <span style="
+                                    display:inline-block;
+                                    padding:5px 10px;
+                                    border-radius:20px;
+                                    background:#e8f7ee;
+                                    color:#187a3d;
+                                    font-size:13px;
+                                    font-weight:600;
+                                ">
+                                    Assigned
+                                </span>
+
+                            {% else %}
+
+                                <span style="
+                                    display:inline-block;
+                                    padding:5px 10px;
+                                    border-radius:20px;
+                                    background:#fff4e5;
+                                    color:#a15c00;
+                                    font-size:13px;
+                                    font-weight:600;
+                                ">
+                                    Not Assigned
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td
+                            colspan="3"
+                            style="
+                                padding:30px;
+                                text-align:center;
+                                color:#777;
+                            "
+                        >
+                            No classes have been created yet.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% if classes %}
+
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:15px;
+            flex-wrap:wrap;
+            margin-top:20px;
+        ">
+
+            <div style="
+                color:#666;
+                font-size:13px;
+            ">
+                Select <strong>Not Assigned</strong> to remove a Form Teacher
+                from a class.
+            </div>
+
+
+            <button
+                type="submit"
+                style="
+                    border:0;
+                    border-radius:7px;
+                    padding:11px 20px;
+                    background:#2563eb;
+                    color:white;
+                    font-weight:600;
+                    cursor:pointer;
+                    font-size:14px;
+                "
+            >
+                Save All Assignments
+            </button>
+
+        </div>
+
+        {% endif %}
+
+    </form>
+
+</div>
+
+{% endblock %}

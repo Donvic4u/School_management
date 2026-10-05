@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Add Student - Teacher</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .topbar {
+            background: #17365d;
+            color: white;
+            padding: 16px 20px;
+        }
+
+        .topbar-inner {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .school-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .page-title {
+            font-size: 13px;
+            opacity: 0.85;
+            margin-top: 3px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 25px auto;
+            padding: 0 15px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            border-top: 4px solid #17365d;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            color: #17365d;
+            font-size: 25px;
+        }
+
+        .intro {
+            color: #666;
+            margin-bottom: 22px;
+            line-height: 1.5;
+        }
+
+        .assignment {
+            background: #eef4fb;
+            border: 1px solid #d7e3f2;
+            border-radius: 7px;
+            padding: 14px 16px;
+            margin-bottom: 22px;
+        }
+
+        .assignment strong {
+            color: #17365d;
+        }
+
+        .assignment div {
+            margin-top: 5px;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .form-row {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: #17365d;
+            font-size: 14px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #cfd6df;
+            border-radius: 6px;
+            font-size: 15px;
+            background: white;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #17365d;
+        }
+
+        .helptext {
+            display: block;
+            margin-top: 5px;
+            color: #777;
+            font-size: 12px;
+        }
+
+        .errorlist {
+            margin: 5px 0 0;
+            padding: 0;
+            list-style: none;
+            color: #dc3545;
+            font-size: 13px;
+        }
+
+        .non-field-errors {
+            background: #f8d7da;
+            border: 1px solid #f5c2c7;
+            color: #842029;
+            border-radius: 7px;
+            padding: 12px;
+            margin-bottom: 18px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .button {
+            display: inline-block;
+            flex: 1;
+            text-align: center;
+            padding: 13px 15px;
+            border-radius: 7px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .save {
+            background: #198754;
+            color: white;
+        }
+
+        .cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        .button:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 600px) {
+            .school-title {
+                font-size: 17px;
+            }
+
+            .container {
+                margin-top: 18px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 21px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="topbar">
+    <div class="topbar-inner">
+        <div class="school-title">
+            ROCK FOUNDATION ACADEMY AND COLLEGE
+        </div>
+
+        <div class="page-title">
+            FORM TEACHER — ADD STUDENT
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>Add Student</h1>
+
+        <div class="intro">
+            Add a new student to your assigned class. The student will
+            automatically be enrolled for the current academic term.
+        </div>
+
+        <div class="assignment">
+            <strong>Admission Number</strong>
+            <div>{{ generated_admission_number }}</div>
+
+            <strong style="display:block; margin-top:10px;">
+                Assigned Class
+            </strong>
+            <div>{{ assigned_class.name }}</div>
+
+            <strong style="display:block; margin-top:10px;">
+                Current Term
+            </strong>
+            <div>{{ current_term }}</div>
+        </div>
+
+        {% if form.non_field_errors %}
+            <div class="non-field-errors">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form %}
+                {% if field.name != "current_class" and field.name != "active" %}
+                    <div class="form-row">
+                        {{ field.label_tag }}
+                        {{ field }}
+
+                        {% if field.help_text %}
+                            <span class="helptext">
+                                {{ field.help_text }}
+                            </span>
+                        {% endif %}
+
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <div class="actions">
+                <button type="submit" class="button save">
+                    ADD STUDENT
+                </button>
+
+                <a href="{% url 'teacher_dashboard' %}" class="button cancel">
+                    CANCEL
+                </a>
+            </div>
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

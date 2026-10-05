@@ -1,0 +1,403 @@
+{% extends "school/base.html" %}
+
+{% block title %}Teachers{% endblock %}
+
+{% block content %}
+
+<style>
+    .teacher-page {
+        max-width: 1150px;
+        margin: 0 auto;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .page-header h2 {
+        margin: 0 0 5px 0;
+    }
+
+    .page-header p {
+        margin: 0;
+        color: #666;
+    }
+
+    .teacher-count {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+
+    .teacher-table-wrap {
+        overflow-x: auto;
+    }
+
+    .teacher-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .teacher-table th,
+    .teacher-table td {
+        padding: 12px 10px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .teacher-table th {
+        background: #f7f7f7;
+        font-weight: 700;
+    }
+
+    .status {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .status.active {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .status.inactive {
+        background: #ffebee;
+        color: #c62828;
+    }
+
+    .status.account {
+        background: #e3f2fd;
+        color: #1565c0;
+    }
+
+    .status.no-account {
+        background: #fff3e0;
+        color: #e65100;
+    }
+
+    .action-links {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .action-links a {
+        text-decoration: none;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 35px 15px;
+        color: #666;
+    }
+
+    .management-note {
+        margin-top: 18px;
+        background: #f7f7f7;
+        border-radius: 8px;
+        padding: 14px;
+        color: #555;
+        font-size: 14px;
+    }
+
+    @media (max-width: 700px) {
+        .page-header {
+            align-items: stretch;
+        }
+
+        .page-header .button {
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .teacher-table th,
+        .teacher-table td {
+            padding: 10px 8px;
+        }
+    }
+</style>
+
+
+<style id="teacher-final-ui">
+    .teacher-page {
+        background: transparent;
+    }
+
+    .teacher-page .page-header h2 {
+        color: #17365d;
+        font-size: 25px;
+        letter-spacing: -0.2px;
+    }
+
+    .teacher-page .page-header p {
+        font-size: 14px;
+    }
+
+    .teacher-page .card {
+        background: #fff;
+        border: 1px solid #e3e8ee;
+        border-radius: 10px;
+        padding: 18px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .teacher-page .teacher-count {
+        color: #17365d;
+        font-weight: 600;
+        margin-bottom: 14px;
+    }
+
+    .teacher-table th {
+        background: #17365d;
+        color: #fff;
+        border-bottom: 0;
+        font-size: 13px;
+    }
+
+    .teacher-table td {
+        font-size: 14px;
+        vertical-align: middle;
+    }
+
+    .teacher-table tbody tr:nth-child(even) {
+        background: #fafbfc;
+    }
+
+    .teacher-table tbody tr:hover {
+        background: #f1f6fb;
+    }
+
+    .teacher-table td:first-child strong {
+        color: #17365d;
+    }
+
+    .action-links {
+        gap: 6px;
+    }
+
+    .action-links .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 36px;
+        padding: 7px 11px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    .action-links .button:hover {
+        transform: translateY(-1px);
+        opacity: 0.9;
+    }
+
+    .management-note {
+        border: 1px solid #e3e8ee;
+        background: #f8fafc;
+        color: #4b5563;
+    }
+
+    @media (max-width: 700px) {
+        .teacher-page .card {
+            padding: 12px;
+        }
+
+        .teacher-table {
+            min-width: 900px;
+        }
+
+        .teacher-table th,
+        .teacher-table td {
+            padding: 10px 9px;
+        }
+
+        .action-links .button {
+            min-height: 38px;
+        }
+    }
+</style>
+
+<div class="teacher-page">
+
+    <div class="page-header">
+        <div>
+            <h2>Teacher Management</h2>
+            <p>Add and manage teachers in the school system.</p>
+        </div>
+
+        <a class="button" href="{% url 'teacher_add' %}">
+            + Add Teacher
+        </a>
+    </div>
+
+    <div class="card">
+
+        <div class="teacher-count">
+            {{ teachers|length }}
+            teacher{{ teachers|length|pluralize }}
+        </div>
+
+        <div class="teacher-table-wrap">
+
+            <table class="teacher-table">
+
+                <thead>
+                    <tr>
+                        <th>Staff ID</th>
+                        <th>Teacher</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Teacher Status</th>
+                        <th>Login Account</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for teacher in teachers %}
+
+                    <tr>
+
+                        <td>
+                            <strong>{{ teacher.staff_id }}</strong>
+                        </td>
+
+                        <td>
+                            {{ teacher.full_name }}
+                        </td>
+
+                        <td>
+                            {{ teacher.phone|default:"—" }}
+                        </td>
+
+                        <td>
+                            {{ teacher.email|default:"—" }}
+                        </td>
+
+                        <td>
+
+                            {% if teacher.active %}
+                                <span class="status active">
+                                    Active
+                                </span>
+                            {% else %}
+                                <span class="status inactive">
+                                    Inactive
+                                </span>
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if teacher.account %}
+
+                                {% if teacher.account.active %}
+                                    <span class="status account">
+                                        Created
+                                    </span>
+                                {% else %}
+                                    <span class="status inactive">
+                                        Disabled
+                                    </span>
+                                {% endif %}
+
+                            {% else %}
+
+                                <span class="status no-account">
+                                    Not Created
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <div class="action-links">
+
+                                <a
+                                    class="button secondary"
+                                    href="{% url 'teacher_edit' teacher.id %}"
+                                >
+                                    Edit
+                                </a>
+
+                                <a
+                                    class="button"
+                                    href="{% url 'teacher_account_manage' teacher.id %}"
+                                >
+                                    {% if teacher.account %}
+                                        Manage Login
+                                    {% else %}
+                                        Create Login
+                                    {% endif %}
+                                </a>
+
+                                <a
+                                    class="button secondary"
+                                    href="{% url 'teacher_form_class_manage' teacher.id %}"
+                                >
+                                    Assign Class
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="7">
+
+                            <div class="empty-state">
+
+                                No teachers have been added yet.
+
+                                <br><br>
+
+                                <a
+                                    class="button"
+                                    href="{% url 'teacher_add' %}"
+                                >
+                                    + Add First Teacher
+                                </a>
+
+                            </div>
+
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <div class="management-note">
+        <strong>Admin workflow:</strong>
+        Add the teacher first, create the teacher's login account,
+        then assign the Form Teacher class and teaching responsibilities.
+    </div>
+
+</div>
+
+{% endblock %}

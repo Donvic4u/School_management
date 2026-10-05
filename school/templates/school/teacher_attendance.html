@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Daily Attendance</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .topbar {
+            background: #17365d;
+            color: white;
+            padding: 16px 20px;
+        }
+
+        .topbar-inner {
+            max-width: 1100px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .school-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .page-title {
+            font-size: 13px;
+            opacity: 0.85;
+            margin-top: 3px;
+        }
+
+        .logout {
+            display: inline-block;
+            background: #dc3545;
+            color: white;
+            text-decoration: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 25px auto;
+            padding: 0 15px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #17365d;
+        }
+
+        .info {
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .date-form {
+            display: flex;
+            gap: 10px;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+
+        .date-form label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        input[type="date"] {
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button,
+        .button {
+            border: 0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-weight: bold;
+            font-size: 14px;
+            text-decoration: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .primary {
+            background: #17365d;
+            color: white;
+        }
+
+        .secondary {
+            background: #198754;
+            color: white;
+        }
+
+        .back {
+            background: #64748b;
+            color: white;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        th {
+            background: #17365d;
+            color: white;
+        }
+
+        select {
+            width: 100%;
+            padding: 9px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .message {
+            padding: 12px 15px;
+            border-radius: 7px;
+            margin-bottom: 15px;
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        @media (max-width: 600px) {
+            .topbar-inner {
+                align-items: flex-start;
+            }
+
+            .school-title {
+                font-size: 17px;
+            }
+
+            th,
+            td {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="topbar">
+    <div class="topbar-inner">
+        <div>
+            <div class="school-title">
+                ROCK FOUNDATION ACADEMY AND COLLEGE
+            </div>
+            <div class="page-title">
+                DAILY ATTENDANCE
+            </div>
+        </div>
+
+        <a href="{% url 'teacher_logout' %}" class="logout">
+            Logout
+        </a>
+    </div>
+</div>
+
+<div class="container">
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card">
+        <h1>Daily Attendance</h1>
+
+        <div class="info">
+            <strong>Teacher:</strong> {{ teacher.full_name }}<br>
+            <strong>Class:</strong> {{ class_level.name }}<br>
+            <strong>Session:</strong> {{ current_term.session.name }}<br>
+            <strong>Term:</strong> {{ current_term.name }}
+        </div>
+
+        <form method="get" class="date-form">
+            <div>
+                <label for="date">Attendance Date</label>
+                <input
+                    type="date"
+                    id="date"
+                    name="date"
+                    value="{{ attendance_date|date:'Y-m-d' }}"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="primary">
+                LOAD DATE
+            </button>
+        </form>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <input
+            type="hidden"
+            name="attendance_date"
+            value="{{ attendance_date|date:'Y-m-d' }}"
+        >
+
+        <div class="card">
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Admission No.</th>
+                            <th>Student</th>
+                            <th>Gender</th>
+                            <th>Attendance</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for row in attendance_rows %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                    {{ row.student.admission_number }}
+                                </td>
+                                <td>
+                                    <strong>
+                                        {{ row.student.full_name }}
+                                    </strong>
+                                </td>
+                                <td>
+                                    {{ row.student.gender }}
+                                </td>
+                                <td>
+                                    <select
+                                        name="status_{{ row.student.id }}"
+                                    >
+                                        <option
+                                            value="PRESENT"
+                                            {% if row.status == "PRESENT" %}selected{% endif %}
+                                        >
+                                            Present
+                                        </option>
+
+                                        <option
+                                            value="ABSENT"
+                                            {% if row.status == "ABSENT" %}selected{% endif %}
+                                        >
+                                            Absent
+                                        </option>
+
+                                        <option
+                                            value="LATE"
+                                            {% if row.status == "LATE" %}selected{% endif %}
+                                        >
+                                            Late
+                                        </option>
+
+                                        <option
+                                            value="EXCUSED"
+                                            {% if row.status == "EXCUSED" %}selected{% endif %}
+                                        >
+                                            Excused
+                                        </option>
+                                    </select>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5">
+                                    No active students are enrolled
+                                    in this class.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="actions">
+                <button type="submit" class="secondary">
+                    SAVE ATTENDANCE
+                </button>
+
+                <a
+                    href="{% url 'teacher_attendance_history' %}"
+                    class="button primary"
+                >
+                    ATTENDANCE HISTORY
+                </a>
+
+                <a
+                    href="{% url 'teacher_dashboard' %}"
+                    class="button back"
+                >
+                    BACK TO DASHBOARD
+                </a>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+</body>
+</html>

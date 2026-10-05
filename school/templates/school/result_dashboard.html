@@ -1,0 +1,708 @@
+{% extends "school/base.html" %}
+
+{% block title %}Result Processing Dashboard{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* =========================================================
+   FINAL RESULT PROCESSING DASHBOARD UI
+   ========================================================= */
+
+.result-dashboard {
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 4px 0 30px;
+}
+
+.result-header {
+    background: linear-gradient(135deg, #17365d 0%, #214d7d 100%);
+    color: #ffffff;
+    border-radius: 14px;
+    padding: 28px 28px;
+    margin-bottom: 22px;
+    box-shadow: 0 6px 18px rgba(23, 54, 93, 0.16);
+    border: 1px solid rgba(23, 54, 93, 0.15);
+}
+
+.result-header h1 {
+    margin: 0 0 7px;
+    font-size: 27px;
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: .2px;
+}
+
+.result-header p {
+    margin: 0;
+    color: #e9f1f8;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.filter-card {
+    background: #ffffff;
+    border: 1px solid #d7dee6;
+    border-radius: 12px;
+    padding: 21px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 12px rgba(23, 54, 93, 0.07);
+}
+
+.filter-title {
+    color: #17365d;
+    font-size: 18px;
+    font-weight: 800;
+    margin: 0 0 17px;
+    padding-bottom: 11px;
+    border-bottom: 1px solid #e3e8ed;
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+    gap: 13px;
+    align-items: end;
+}
+
+.filter-field label {
+    display: block;
+    color: #344054;
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+
+.filter-field select {
+    width: 100%;
+    min-height: 43px;
+    padding: 9px 11px;
+    border: 1px solid #cbd5df;
+    border-radius: 7px;
+    background: #ffffff;
+    color: #263238;
+    box-sizing: border-box;
+    font-size: 14px;
+    transition: .2s ease;
+}
+
+.filter-field select:hover {
+    border-color: #9eabb8;
+}
+
+.filter-field select:focus {
+    outline: none;
+    border-color: #17365d;
+    box-shadow: 0 0 0 3px rgba(23, 54, 93, 0.12);
+}
+
+.load-button {
+    min-height: 43px;
+    padding: 9px 19px;
+    background: #198754;
+    color: #ffffff;
+    border: 1px solid #198754;
+    border-radius: 7px;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: .2s ease;
+}
+
+.load-button:hover {
+    background: #146c43;
+    border-color: #146c43;
+    transform: translateY(-1px);
+}
+
+.result-summary {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+    margin: 4px 0 15px;
+    color: #667085;
+}
+
+.result-summary-count {
+    color: #17365d;
+    font-weight: 800;
+}
+
+.filtered-badge {
+    background: #eef3f8;
+    color: #17365d;
+    border: 1px solid #d3dce6;
+    border-radius: 20px;
+    padding: 5px 10px;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.class-result-card {
+    background: #ffffff;
+    border: 1px solid #d7dee6;
+    border-radius: 13px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 14px rgba(23, 54, 93, 0.07);
+}
+
+.class-result-header {
+    background: #f4f7fa;
+    border-bottom: 1px solid #d7dee6;
+    padding: 17px 19px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.class-title h2 {
+    margin: 0;
+    color: #17365d;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.class-count {
+    color: #667085;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.class-actions {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 5px 11px;
+    border-radius: 20px;
+    background: #ffffff;
+    border: 1px solid #cbd5df;
+    color: #344054;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.master-result-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    padding: 7px 14px;
+    border-radius: 7px;
+    text-decoration: none;
+    background: #17365d;
+    border: 1px solid #17365d;
+    color: #ffffff !important;
+    font-size: 12px;
+    font-weight: 800;
+    transition: .2s ease;
+}
+
+.master-result-button:hover {
+    background: #102844;
+    border-color: #102844;
+    transform: translateY(-1px);
+}
+
+.score-summary {
+    padding: 16px 19px;
+    border-bottom: 1px solid #e1e6eb;
+    background: #ffffff;
+}
+
+.score-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.score-stat {
+    border: 1px solid #d7dee6;
+    border-radius: 9px;
+    padding: 13px;
+    background: #f9fbfc;
+    transition: .2s ease;
+}
+
+.score-stat:hover {
+    border-color: #b9c5d0;
+    background: #ffffff;
+}
+
+.score-stat-label {
+    display: block;
+    color: #667085;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+}
+
+.score-stat-value {
+    color: #17365d;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.students-section {
+    padding: 15px 19px 18px;
+}
+
+.students-toggle {
+    cursor: pointer;
+    color: #17365d;
+    font-weight: 800;
+    padding: 10px 0;
+    list-style-position: inside;
+}
+
+.students-toggle:hover {
+    color: #198754;
+}
+
+.students-list {
+    margin-top: 8px;
+    border-top: 1px solid #e1e6eb;
+    background: #ffffff;
+}
+
+.student-row {
+    padding: 12px 6px;
+    border-bottom: 1px solid #e7ebef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.student-row:nth-child(even) {
+    background: #f9fbfc;
+}
+
+.student-row:hover {
+    background: #eef5f2;
+}
+
+.student-row:last-child {
+    border-bottom: none;
+}
+
+.student-name {
+    color: #253858;
+    font-weight: 700;
+}
+
+.student-admission {
+    display: inline-block;
+    color: #17365d;
+    background: #eef3f8;
+    border: 1px solid #d7dee6;
+    border-radius: 5px;
+    padding: 3px 7px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-right: 7px;
+}
+
+.view-result {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 6px 12px;
+    border: 1px solid #198754;
+    border-radius: 7px;
+    color: #198754 !important;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 800;
+    background: #ffffff;
+    transition: .2s ease;
+}
+
+.view-result:hover {
+    background: #198754;
+    color: #ffffff !important;
+    transform: translateY(-1px);
+}
+
+.no-students {
+    color: #667085;
+    font-size: 13px;
+    padding: 10px 0;
+}
+
+.empty-results {
+    background: #ffffff;
+    border: 1px solid #d7dee6;
+    border-radius: 12px;
+    padding: 42px 20px;
+    text-align: center;
+    color: #667085;
+    box-shadow: 0 3px 12px rgba(23, 54, 93, 0.05);
+}
+
+@media (max-width: 1050px) {
+    .filter-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .load-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 650px) {
+    .result-dashboard {
+        padding: 0 0 25px;
+    }
+
+    .result-header {
+        padding: 22px 19px;
+        border-radius: 11px;
+    }
+
+    .result-header h1 {
+        font-size: 22px;
+    }
+
+    .filter-card {
+        padding: 17px;
+    }
+
+    .filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .score-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .class-result-header {
+        align-items: stretch;
+    }
+
+    .class-actions {
+        width: 100%;
+    }
+
+    .status-badge,
+    .master-result-button {
+        flex: 1;
+        text-align: center;
+    }
+
+    .student-row {
+        align-items: flex-start;
+    }
+
+    .view-result {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+</style>
+
+<div class="result-dashboard">
+
+    <div class="result-header">
+        <h1>Result Processing Dashboard</h1>
+
+        {% if selected_term %}
+            <p>
+                {{ selected_term.session.name }} — {{ selected_term.name }}
+            </p>
+        {% endif %}
+    </div>
+
+
+    <!-- FILTERS -->
+
+    <div class="filter-card">
+
+        <div class="filter-title">
+            Result Filters
+        </div>
+
+        <form method="get">
+
+            <div class="filter-grid">
+
+                <div class="filter-field">
+                    <label>Academic Session</label>
+
+                    <select name="session">
+                        {% for session in sessions %}
+                            <option
+                                value="{{ session.id }}"
+                                {% if selected_session and session.id == selected_session.id %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ session.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+
+                <div class="filter-field">
+                    <label>Term</label>
+
+                    <select name="term">
+                        {% for term in terms %}
+                            <option
+                                value="{{ term.id }}"
+                                {% if selected_term and term.id == selected_term.id %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ term.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+
+                <div class="filter-field">
+                    <label>Class</label>
+
+                    <select name="class">
+                        <option value="">All Classes</option>
+
+                        {% for class_level in classes %}
+                            <option
+                                value="{{ class_level.id }}"
+                                {% if selected_class_id|stringformat:"s" == class_level.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ class_level.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+
+                <div class="filter-field">
+                    <label>Status</label>
+
+                    <select name="status">
+                        <option value="">All Statuses</option>
+
+                        {% for status in status_choices %}
+                            <option
+                                value="{{ status }}"
+                                {% if selected_status == status %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ status }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+
+                <div>
+                    <button type="submit" class="load-button">
+                        Load Results
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="result-summary">
+
+        <span class="result-summary-count">
+            {{ class_data|length }}
+            class{{ class_data|length|pluralize }}
+            displayed
+        </span>
+
+        {% if selected_class_id or selected_status %}
+            <span class="filtered-badge">
+                Filtered Results
+            </span>
+        {% endif %}
+
+    </div>
+
+
+    <!-- CLASS RESULTS -->
+
+    {% if class_data %}
+
+        {% for item in class_data %}
+
+            <div class="class-result-card">
+
+                <div class="class-result-header">
+
+                    <div class="class-title">
+
+                        <h2>
+                            {{ item.class_level.name }}
+                        </h2>
+
+                        <div class="class-count">
+                            {{ item.student_count }}
+                            student{{ item.student_count|pluralize }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="class-actions">
+
+                        <span class="status-badge">
+                            {{ item.status }}
+                        </span>
+
+                        <a
+                            href="{% url 'class_master_result' item.class_level.id %}"
+                            class="master-result-button"
+                        >
+                            Master Result
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SCORE SUMMARY -->
+
+                <div class="score-summary">
+
+                    <div class="score-stats">
+
+                        <div class="score-stat">
+                            <span class="score-stat-label">
+                                Total Scores
+                            </span>
+
+                            <span class="score-stat-value">
+                                {{ item.total_scores }}
+                            </span>
+                        </div>
+
+
+                        <div class="score-stat">
+                            <span class="score-stat-label">
+                                Submitted
+                            </span>
+
+                            <span class="score-stat-value">
+                                {{ item.submitted_scores }}
+                            </span>
+                        </div>
+
+
+                        <div class="score-stat">
+                            <span class="score-stat-label">
+                                Approved
+                            </span>
+
+                            <span class="score-stat-value">
+                                {{ item.approved_scores }}
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- STUDENTS -->
+
+                <div class="students-section">
+
+                    {% if item.students %}
+
+                        <details>
+
+                            <summary class="students-toggle">
+                                View Students
+                            </summary>
+
+                            <div class="students-list">
+
+                                {% for student_item in item.students %}
+
+                                    <div class="student-row">
+
+                                        <div>
+
+                                            <span class="student-admission">
+                                                {{ student_item.student.admission_number }}
+                                            </span>
+
+                                            <span class="student-name">
+                                                {{ student_item.student.full_name }}
+                                            </span>
+
+                                        </div>
+
+
+                                        <a
+                                            href="{% url 'student_result' student_item.url_id %}"
+                                            class="view-result"
+                                        >
+                                            View Result
+                                        </a>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </details>
+
+                    {% else %}
+
+                        <div class="no-students">
+                            No students enrolled for this term.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty-results">
+            No classes match the selected filters.
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

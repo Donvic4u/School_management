@@ -1,0 +1,248 @@
+{% extends "school/base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+
+.student-form-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 4px 0 30px;
+}
+
+.student-form-header {
+    background: linear-gradient(135deg, #17365d, #214d7d);
+    color: #ffffff;
+    border-radius: 14px;
+    padding: 23px 27px;
+    margin-bottom: 18px;
+    box-shadow: 0 5px 16px rgba(23,54,93,.15);
+}
+
+.student-form-header h1 {
+    margin: 0;
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.student-form-card {
+    background: #ffffff;
+    border: 1px solid #d7dee6;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 14px rgba(23,54,93,.07);
+}
+
+.form-errors {
+    padding: 12px 14px;
+    margin-bottom: 18px;
+    border-radius: 8px;
+    background: #fff1f2;
+    border: 1px solid #f1b8bf;
+    color: #842029;
+    font-size: 13px;
+}
+
+.student-field {
+    margin-bottom: 17px;
+}
+
+.student-field label {
+    display: block;
+    margin-bottom: 6px;
+    color: #253858;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.student-field input,
+.student-field select,
+.student-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 42px;
+    padding: 9px 11px;
+    border: 1px solid #cbd5df;
+    border-radius: 7px;
+    background: #ffffff;
+    color: #344054;
+    font-size: 14px;
+}
+
+.student-field textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.student-field input:focus,
+.student-field select:focus,
+.student-field textarea:focus {
+    outline: none;
+    border-color: #198754;
+    box-shadow: 0 0 0 3px rgba(25,135,84,.12);
+}
+
+.field-error {
+    margin-top: 5px;
+    color: #b42318;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.help-text {
+    margin-top: 5px;
+    color: #667085;
+    font-size: 11px;
+}
+
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 23px;
+    padding-top: 18px;
+    border-top: 1px solid #e1e6eb;
+}
+
+.form-button,
+.cancel-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    box-sizing: border-box;
+    padding: 9px 18px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.form-button {
+    border: 1px solid #198754;
+    background: #198754;
+    color: #ffffff;
+}
+
+.form-button:hover {
+    background: #146c43;
+    border-color: #146c43;
+}
+
+.cancel-button {
+    border: 1px solid #667085;
+    background: #ffffff;
+    color: #475467;
+}
+
+.cancel-button:hover {
+    background: #667085;
+    color: #ffffff;
+}
+
+@media (max-width: 600px) {
+
+    .student-form-header {
+        padding: 21px 19px;
+        border-radius: 11px;
+    }
+
+    .student-form-header h1 {
+        font-size: 21px;
+    }
+
+    .student-form-card {
+        padding: 18px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-button,
+    .cancel-button {
+        width: 100%;
+    }
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="student-form-page">
+
+    <div class="student-form-header">
+        <h1>{{ title }}</h1>
+    </div>
+
+    <div class="student-form-card">
+
+        {% if form.non_field_errors %}
+
+            <div class="form-errors">
+                {{ form.non_field_errors }}
+            </div>
+
+        {% endif %}
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            {% for field in form %}
+
+                <div class="student-field">
+
+                    {{ field.label_tag }}
+
+                    {{ field }}
+
+                    {% if field.errors %}
+
+                        <div class="field-error">
+                            {{ field.errors }}
+                        </div>
+
+                    {% endif %}
+
+                    {% if field.help_text %}
+
+                        <div class="help-text">
+                            {{ field.help_text }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="form-button"
+                >
+                    SAVE STUDENT
+                </button>
+
+                <a
+                    class="cancel-button"
+                    href="{% url 'student_list' %}"
+                >
+                    CANCEL
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

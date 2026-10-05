@@ -1,0 +1,520 @@
+{% extends "school/base.html" %}
+{% load school_extras %}
+
+{% block title %}
+Form Teacher Comments - {{ class_level.name }}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+
+.comments-page {
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 4px 0 30px;
+}
+
+/* HEADER */
+
+.comments-header {
+    background: linear-gradient(135deg, #17365d, #214d7d);
+    color: #ffffff;
+    border-radius: 14px;
+    padding: 24px 27px;
+    margin-bottom: 18px;
+    box-shadow: 0 5px 16px rgba(23,54,93,.15);
+}
+
+.comments-header h1 {
+    margin: 0 0 18px;
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.header-info {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.header-info-item {
+    background: rgba(255,255,255,.10);
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+
+.header-info-label {
+    display: block;
+    color: #cddbea;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+    letter-spacing: .3px;
+}
+
+.header-info-value {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* MESSAGES */
+
+.page-message {
+    padding: 12px 15px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    background: #eaf7ef;
+    border: 1px solid #b9e2ca;
+    color: #146c43;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* TABLE CARD */
+
+.comments-card {
+    background: #ffffff;
+    border: 1px solid #d7dee6;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(23,54,93,.07);
+    overflow-x: auto;
+}
+
+.comments-table {
+    width: 100%;
+    min-width: 1050px;
+    border-collapse: collapse;
+}
+
+.comments-table th {
+    background: #17365d;
+    color: #ffffff;
+    border: 1px solid #34597f;
+    padding: 11px 9px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.comments-table th:first-child,
+.comments-table td:first-child {
+    text-align: center;
+    width: 55px;
+}
+
+.comments-table th:nth-child(2) {
+    width: 125px;
+}
+
+.comments-table th:nth-child(4) {
+    text-align: center;
+    width: 105px;
+}
+
+.comments-table td {
+    padding: 10px 9px;
+    border: 1px solid #d7dee6;
+    color: #344054;
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+.comments-table tbody tr:nth-child(even) {
+    background: #f9fbfc;
+}
+
+.comments-table tbody tr:hover {
+    background: #eef5f2;
+}
+
+.admission-badge {
+    display: inline-block;
+    padding: 5px 8px;
+    border-radius: 5px;
+    background: #eef2f6;
+    border: 1px solid #d5dce4;
+    color: #475467;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.student-name {
+    font-weight: 700;
+    color: #253858;
+}
+
+/* GRADE */
+
+.grade-cell {
+    text-align: center;
+}
+
+.grade-badge {
+    display: inline-flex;
+    min-width: 34px;
+    justify-content: center;
+    padding: 5px 9px;
+    border-radius: 16px;
+    background: #eaf3ff;
+    border: 1px solid #bdd6f2;
+    color: #175a9b;
+    font-weight: 800;
+    font-size: 12px;
+}
+
+/* SELECTS */
+
+.comment-select {
+    width: 100%;
+    min-height: 42px;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border: 1px solid #cbd5df;
+    border-radius: 7px;
+    background: #ffffff;
+    color: #344054;
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+.comment-select:focus {
+    outline: none;
+    border-color: #198754;
+    box-shadow: 0 0 0 3px rgba(25,135,84,.12);
+}
+
+/* ACTIONS */
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.save-button,
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 41px;
+    box-sizing: border-box;
+    padding: 9px 17px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.save-button {
+    border: 1px solid #198754;
+    background: #198754;
+    color: #ffffff;
+}
+
+.save-button:hover {
+    background: #146c43;
+    border-color: #146c43;
+}
+
+.back-button {
+    border: 1px solid #667085;
+    background: #ffffff;
+    color: #475467;
+}
+
+.back-button:hover {
+    background: #667085;
+    color: #ffffff;
+}
+
+/* EMPTY */
+
+.empty-state {
+    padding: 35px 20px !important;
+    text-align: center !important;
+    color: #667085 !important;
+    font-weight: 600;
+}
+
+/* MOBILE */
+
+@media (max-width: 850px) {
+
+    .header-info {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+
+    .comments-header {
+        padding: 21px 19px;
+        border-radius: 11px;
+    }
+
+    .comments-header h1 {
+        font-size: 21px;
+    }
+
+    .header-info {
+        grid-template-columns: 1fr;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+
+    .save-button,
+    .back-button {
+        width: 100%;
+    }
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="comments-page">
+
+    <!-- HEADER -->
+
+    <div class="comments-header">
+
+        <h1>Form Teacher Comments</h1>
+
+        <div class="header-info">
+
+            <div class="header-info-item">
+                <span class="header-info-label">
+                    Form Teacher
+                </span>
+                <span class="header-info-value">
+                    {{ teacher.full_name }}
+                </span>
+            </div>
+
+            <div class="header-info-item">
+                <span class="header-info-label">
+                    Class
+                </span>
+                <span class="header-info-value">
+                    {{ class_level.name }}
+                </span>
+            </div>
+
+            <div class="header-info-item">
+                <span class="header-info-label">
+                    Term
+                </span>
+                <span class="header-info-value">
+                    {{ current_term.name }}
+                </span>
+            </div>
+
+            <div class="header-info-item">
+                <span class="header-info-label">
+                    Session
+                </span>
+                <span class="header-info-value">
+                    {{ current_term.session.name }}
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- MESSAGES -->
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="page-message">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    <!-- COMMENTS -->
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <div class="comments-card">
+
+            <table class="comments-table">
+
+                <thead>
+
+                    <tr>
+                        <th>S/N</th>
+                        <th>ADMISSION NUMBER</th>
+                        <th>STUDENT NAME</th>
+                        <th>OVERALL GRADE</th>
+                        <th>BEHAVIOUR COMMENT</th>
+                        <th>PRINCIPAL'S OVERALL COMMENT</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for enrollment in enrollments %}
+
+                        <tr>
+
+                            <td>
+                                {{ forloop.counter }}
+                            </td>
+
+                            <td>
+                                <span class="admission-badge">
+                                    {{ enrollment.student.admission_number }}
+                                </span>
+                            </td>
+
+                            <td class="student-name">
+                                {{ enrollment.student.full_name }}
+                            </td>
+
+                            <td class="grade-cell">
+
+                                {% with grade=academic_grades|get_item:enrollment.id %}
+
+                                    {% if grade %}
+
+                                        <span class="grade-badge">
+                                            {{ grade }}
+                                        </span>
+
+                                    {% else %}
+
+                                        —
+
+                                    {% endif %}
+
+                                {% endwith %}
+
+                            </td>
+
+                            <td>
+
+                                <select
+                                    name="student_{{ enrollment.id }}_comment"
+                                    class="comment-select"
+                                >
+
+                                    <option value="">
+                                        -- Select Behaviour Comment --
+                                    </option>
+
+                                    {% for value, label in comment_choices %}
+
+                                        <option
+                                            value="{{ value }}"
+                                            {% if enrollment.form_teacher_comment == value %}selected{% endif %}
+                                        >
+                                            {{ label }}
+                                        </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+                            </td>
+
+                            <td>
+
+                                {% with grade=academic_grades|get_item:enrollment.id %}
+
+                                    <select
+                                        name="student_{{ enrollment.id }}_academic_comment"
+                                        class="comment-select"
+                                    >
+
+                                        <option value="">
+                                            -- Select Academic Comment --
+                                        </option>
+
+                                        {% for value, label in academic_comment_choices %}
+
+                                            <option
+                                                value="{{ value }}"
+                                                {% if enrollment.academic_performance_comment == value %}
+                                                    selected
+                                                {% elif not enrollment.academic_performance_comment and grade == value %}
+                                                    selected
+                                                {% endif %}
+                                            >
+                                                {{ value }} — {{ label }}
+                                            </option>
+
+                                        {% endfor %}
+
+                                    </select>
+
+                                {% endwith %}
+
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                No students are enrolled in this class
+                                for the current term.
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% if enrollments %}
+
+            <div class="actions">
+
+                <button
+                    type="submit"
+                    class="save-button"
+                >
+                    SAVE COMMENTS
+                </button>
+
+                <a
+                    href="{% url 'teacher_dashboard' %}"
+                    class="back-button"
+                >
+                    ← BACK TO TEACHER DASHBOARD
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </form>
+
+</div>
+
+{% endblock %}

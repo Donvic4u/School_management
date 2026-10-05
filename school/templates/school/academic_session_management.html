@@ -1,0 +1,643 @@
+{% extends "school/base.html" %}
+
+{% block title %}Academic Session & Term Management{% endblock %}
+
+{% block content %}
+
+<style>
+.session-page {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* =========================
+   HEADER
+   ========================= */
+
+.session-header {
+    background: #17365d;
+    color: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(23,54,93,.14);
+}
+
+.session-header h1 {
+    margin: 0 0 7px;
+    font-size: 25px;
+}
+
+.session-header p {
+    margin: 0;
+    color: rgba(255,255,255,.88);
+    line-height: 1.55;
+    font-size: 14px;
+}
+
+/* =========================
+   MESSAGES
+   ========================= */
+
+.session-message {
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    background: #e8f7ee;
+    border: 1px solid #b7dfc8;
+    border-left: 4px solid #198754;
+    color: #155724;
+}
+
+/* =========================
+   CURRENT STATUS
+   ========================= */
+
+.current-status-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(240px, 1fr));
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.current-status-card {
+    background: white;
+    border: 1px solid #d7dee6;
+    border-radius: 11px;
+    padding: 19px;
+    box-shadow: 0 3px 9px rgba(0,0,0,.05);
+    border-top: 4px solid #198754;
+}
+
+.current-status-card.term {
+    border-top-color: #2563eb;
+}
+
+.status-label {
+    color: #6b7280;
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: .35px;
+    margin-bottom: 8px;
+}
+
+.status-value {
+    color: #17365d;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.status-subtitle {
+    margin-top: 5px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.status-none {
+    color: #b42332;
+    font-weight: 700;
+}
+
+/* =========================
+   MAIN CARDS
+   ========================= */
+
+.session-card {
+    background: white;
+    border: 1px solid #d7dee6;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,.05);
+}
+
+.session-card h2 {
+    margin: 0 0 8px;
+    color: #17365d;
+    font-size: 19px;
+}
+
+.session-card-description {
+    margin: 0 0 17px;
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* =========================
+   CREATE SESSION
+   ========================= */
+
+.create-session-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.session-name-input {
+    width: 230px;
+    min-height: 43px;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 1px solid #cbd5df;
+    border-radius: 7px;
+    font-size: 14px;
+}
+
+.session-name-input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,.11);
+}
+
+.create-session-button {
+    min-height: 43px;
+    padding: 10px 18px;
+    border: 0;
+    border-radius: 7px;
+    background: #198754;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.create-session-button:hover {
+    background: #157347;
+}
+
+/* =========================
+   SESSION BLOCKS
+   ========================= */
+
+.academic-session {
+    border: 1px solid #cfd8e3;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.academic-session:last-child {
+    margin-bottom: 0;
+}
+
+.session-bar {
+    padding: 14px 16px;
+    background: #f3f6f9;
+    border-bottom: 1px solid #d8e0e8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.session-name {
+    color: #17365d;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.current-session-badge {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 8px;
+    padding: 5px 9px;
+    border-radius: 999px;
+    background: #e8f7ee;
+    border: 1px solid #b7dfc8;
+    color: #187a3d;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .3px;
+}
+
+.set-current-session {
+    min-height: 38px;
+    padding: 8px 13px;
+    border: 1px solid #198754;
+    border-radius: 7px;
+    background: white;
+    color: #187a3d;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.set-current-session:hover {
+    background: #e8f7ee;
+}
+
+/* =========================
+   TERMS
+   ========================= */
+
+.terms-container {
+    padding: 15px;
+}
+
+.term-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 13px;
+    margin-bottom: 9px;
+    border: 1px solid #dfe5eb;
+    border-radius: 8px;
+    background: white;
+    transition: background .15s ease, border-color .15s ease;
+}
+
+.term-row:hover {
+    background: #f8fbff;
+    border-color: #cbd8e5;
+}
+
+.term-row:last-child {
+    margin-bottom: 0;
+}
+
+.term-name {
+    color: #374151;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.current-term-badge {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 8px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #e8f1ff;
+    border: 1px solid #bfd4f4;
+    color: #2457a6;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .2px;
+}
+
+.set-current-term {
+    min-height: 35px;
+    padding: 7px 11px;
+    border: 1px solid #b8c3cf;
+    border-radius: 6px;
+    background: white;
+    color: #374151;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.set-current-term:hover {
+    background: #eef2f6;
+    border-color: #8f9baa;
+}
+
+.no-terms,
+.no-sessions {
+    padding: 20px;
+    text-align: center;
+    color: #6b7280;
+    border: 1px dashed #cbd5df;
+    border-radius: 8px;
+    background: #f8fafc;
+}
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 700px) {
+
+    .session-header {
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    .session-header h1 {
+        font-size: 21px;
+    }
+
+    .current-status-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .session-card {
+        padding: 14px;
+        border-radius: 10px;
+    }
+
+    .create-session-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .session-name-input,
+    .create-session-button {
+        width: 100%;
+    }
+
+    .session-bar,
+    .term-row {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .set-current-session,
+    .set-current-term {
+        width: 100%;
+    }
+
+    .current-session-badge,
+    .current-term-badge {
+        margin-left: 5px;
+    }
+}
+</style>
+
+<div class="session-page">
+
+    <!-- HEADER -->
+
+    <div class="session-header">
+
+        <h1>Academic Session &amp; Term Management</h1>
+
+        <p>
+            Create academic sessions, automatically create their three terms,
+            and select the current session and term.
+        </p>
+
+    </div>
+
+
+    <!-- MESSAGES -->
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="session-message">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    <!-- CURRENT STATUS -->
+
+    <div class="current-status-grid">
+
+        <div class="current-status-card">
+
+            <div class="status-label">
+                Current Session
+            </div>
+
+            {% if current_session %}
+
+                <div class="status-value">
+                    {{ current_session.name }}
+                </div>
+
+            {% else %}
+
+                <div class="status-none">
+                    No current session selected
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="current-status-card term">
+
+            <div class="status-label">
+                Current Term
+            </div>
+
+            {% if current_term %}
+
+                <div class="status-value">
+                    {{ current_term.name }}
+                </div>
+
+                <div class="status-subtitle">
+                    {{ current_term.session.name }}
+                </div>
+
+            {% else %}
+
+                <div class="status-none">
+                    No current term selected
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- CREATE SESSION -->
+
+    <div class="session-card">
+
+        <h2>
+            Create New Academic Session
+        </h2>
+
+        <p class="session-card-description">
+            Example: <strong>2027/2028</strong>.
+            First Term, Second Term and Third Term will be created automatically.
+        </p>
+
+        <form method="post" class="create-session-form">
+
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="action"
+                value="create_session"
+            >
+
+            <input
+                type="text"
+                name="session_name"
+                placeholder="2027/2028"
+                required
+                class="session-name-input"
+            >
+
+            <button
+                type="submit"
+                class="create-session-button"
+            >
+                Create Session
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- EXISTING SESSIONS -->
+
+    <div class="session-card">
+
+        <h2>
+            Existing Academic Sessions
+        </h2>
+
+        <p class="session-card-description">
+            Select the session and term that should be treated as current.
+            Historical sessions remain available for previous academic records.
+        </p>
+
+
+        {% for session in sessions %}
+
+            <div class="academic-session">
+
+                <!-- SESSION BAR -->
+
+                <div class="session-bar">
+
+                    <div>
+
+                        <span class="session-name">
+                            {{ session.name }}
+                        </span>
+
+                        {% if session.is_current %}
+
+                            <span class="current-session-badge">
+                                CURRENT SESSION
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    {% if not session.is_current %}
+
+                        <form method="post">
+
+                            {% csrf_token %}
+
+                            <input
+                                type="hidden"
+                                name="action"
+                                value="set_current_session"
+                            >
+
+                            <input
+                                type="hidden"
+                                name="session_id"
+                                value="{{ session.id }}"
+                            >
+
+                            <button
+                                type="submit"
+                                class="set-current-session"
+                            >
+                                Set as Current Session
+                            </button>
+
+                        </form>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- TERMS -->
+
+                <div class="terms-container">
+
+                    {% for term in session.terms.all %}
+
+                        <div class="term-row">
+
+                            <div>
+
+                                <span class="term-name">
+                                    {{ term.name }}
+                                </span>
+
+                                {% if term.is_current %}
+
+                                    <span class="current-term-badge">
+                                        CURRENT TERM
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            {% if not term.is_current %}
+
+                                <form method="post">
+
+                                    {% csrf_token %}
+
+                                    <input
+                                        type="hidden"
+                                        name="action"
+                                        value="set_current_term"
+                                    >
+
+                                    <input
+                                        type="hidden"
+                                        name="term_id"
+                                        value="{{ term.id }}"
+                                    >
+
+                                    <button
+                                        type="submit"
+                                        class="set-current-term"
+                                    >
+                                        Set Current Term
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
+
+                        </div>
+
+                    {% empty %}
+
+                        <div class="no-terms">
+                            No terms found for this session.
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <div class="no-sessions">
+                No academic sessions have been created yet.
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

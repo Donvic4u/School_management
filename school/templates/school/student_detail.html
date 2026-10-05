@@ -1,0 +1,495 @@
+{% extends "school/base.html" %}
+
+{% block title %}{{ student.full_name }}{% endblock %}
+
+{% block content %}
+
+<style>
+.student-detail-page {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* =========================
+   STUDENT HEADER
+   ========================= */
+
+.student-header {
+    background: #17365d;
+    color: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(23,54,93,.14);
+}
+
+.student-header h2 {
+    margin: 0;
+    font-size: 25px;
+}
+
+.student-header-subtitle {
+    margin-top: 5px;
+    color: rgba(255,255,255,.82);
+    font-size: 13px;
+}
+
+/* =========================
+   INFORMATION CARD
+   ========================= */
+
+.student-info-card,
+.history-card {
+    background: white;
+    border: 1px solid #d7dee6;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,.05);
+}
+
+.student-info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.info-item {
+    border: 1px solid #dfe5eb;
+    border-radius: 8px;
+    padding: 13px;
+    background: #f8fafc;
+}
+
+.info-label {
+    display: block;
+    margin-bottom: 5px;
+    color: #6b7280;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+}
+
+.info-value {
+    color: #17365d;
+    font-size: 14px;
+    font-weight: 700;
+    word-break: break-word;
+}
+
+/* =========================
+   STATUS
+   ========================= */
+
+.status-badge {
+    display: inline-flex;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.status-active {
+    background: #e8f7ee;
+    border: 1px solid #b7dfc8;
+    color: #187a3d;
+}
+
+.status-inactive {
+    background: #fbeaec;
+    border: 1px solid #efc1c6;
+    color: #a61e2a;
+}
+
+/* =========================
+   ACTIONS
+   ========================= */
+
+.student-actions {
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid #e1e6eb;
+}
+
+.student-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 9px 15px;
+    border-radius: 7px;
+    background: #198754;
+    color: white !important;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    border: 1px solid #198754;
+    box-sizing: border-box;
+}
+
+.student-action:hover {
+    background: #157347;
+    border-color: #157347;
+}
+
+.student-action.secondary {
+    background: white;
+    color: #374151 !important;
+    border-color: #cbd5df;
+}
+
+.student-action.secondary:hover {
+    background: #f3f5f7;
+}
+
+/* =========================
+   HISTORY
+   ========================= */
+
+.history-card h3 {
+    margin: 0 0 7px;
+    color: #17365d;
+    font-size: 19px;
+}
+
+.history-description {
+    margin: 0 0 17px;
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.history-table-wrap {
+    overflow-x: auto;
+    border: 1px solid #d7dee6;
+    border-radius: 8px;
+}
+
+.history-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+    background: white;
+}
+
+.history-table th {
+    padding: 12px 11px;
+    background: #17365d;
+    color: white;
+    border: 1px solid #315477;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.history-table td {
+    padding: 11px;
+    border: 1px solid #dfe4e9;
+    color: #374151;
+    font-size: 13px;
+    vertical-align: top;
+}
+
+.history-table tbody tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+.history-table tbody tr:hover {
+    background: #eef5ff;
+}
+
+.class-badge {
+    display: inline-flex;
+    padding: 4px 8px;
+    border-radius: 5px;
+    background: #edf3f9;
+    border: 1px solid #cbd8e5;
+    color: #17365d;
+    font-weight: 800;
+    font-size: 11px;
+}
+
+.empty-history {
+    padding: 25px !important;
+    text-align: center;
+    color: #6b7280 !important;
+    background: #f8fafc;
+}
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 850px) {
+    .student-info-grid {
+        grid-template-columns: repeat(2, minmax(160px, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+
+    .student-header {
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    .student-header h2 {
+        font-size: 21px;
+    }
+
+    .student-info-card,
+    .history-card {
+        padding: 14px;
+        border-radius: 10px;
+    }
+
+    .student-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .student-actions {
+        flex-direction: column;
+    }
+
+    .student-action {
+        width: 100%;
+    }
+
+    .history-table {
+        min-width: 760px;
+    }
+}
+</style>
+
+<div class="student-detail-page">
+
+    <!-- STUDENT HEADER -->
+
+    <div class="student-header">
+
+        <h2>
+            {{ student.full_name }}
+        </h2>
+
+        <div class="student-header-subtitle">
+            Student Profile &amp; Academic Enrollment History
+        </div>
+
+    </div>
+
+
+    <!-- STUDENT INFORMATION -->
+
+    <div class="student-info-card">
+
+        <div class="student-info-grid">
+
+            <div class="info-item">
+                <span class="info-label">Admission No.</span>
+                <span class="info-value">
+                    {{ student.admission_number }}
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Gender</span>
+                <span class="info-value">
+                    {{ student.gender }}
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Current Class</span>
+                <span class="info-value">
+                    {% if student.current_class %}
+                        {{ student.current_class.name }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Status</span>
+                <span class="info-value">
+
+                    {% if student.active %}
+
+                        <span class="status-badge status-active">
+                            Active
+                        </span>
+
+                    {% else %}
+
+                        <span class="status-badge status-inactive">
+                            Inactive
+                        </span>
+
+                    {% endif %}
+
+                </span>
+            </div>
+
+            {% if student.phone_number %}
+
+                <div class="info-item">
+                    <span class="info-label">Phone</span>
+                    <span class="info-value">
+                        {{ student.phone_number }}
+                    </span>
+                </div>
+
+            {% endif %}
+
+            {% if student.date_of_birth %}
+
+                <div class="info-item">
+                    <span class="info-label">Date of Birth</span>
+                    <span class="info-value">
+                        {{ student.date_of_birth }}
+                    </span>
+                </div>
+
+            {% endif %}
+
+            {% if student.date_admitted %}
+
+                <div class="info-item">
+                    <span class="info-label">Date Admitted</span>
+                    <span class="info-value">
+                        {{ student.date_admitted }}
+                    </span>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="student-actions">
+
+            <a
+                class="student-action"
+                href="{% url 'student_edit' student.id %}"
+            >
+                Edit Student
+            </a>
+
+            <a
+                class="student-action"
+                href="{% url 'enrollment_management' %}"
+            >
+                Add / Manage Enrollment
+            </a>
+
+            <a
+                class="student-action secondary"
+                href="{% url 'student_list' %}"
+            >
+                Back to Students
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ENROLLMENT HISTORY -->
+
+    <div class="history-card">
+
+        <h3>
+            Academic Enrollment History
+        </h3>
+
+        <p class="history-description">
+            Historical enrollments are preserved by academic session and term.
+            Previous records are not overwritten when a student changes class.
+        </p>
+
+
+        <div class="history-table-wrap">
+
+            <table class="history-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Session</th>
+                        <th>Term</th>
+                        <th>Class</th>
+                        <th>Behaviour Comment</th>
+                        <th>Academic Comment</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for enrollment in enrollments %}
+
+                        <tr>
+
+                            <td>
+                                {{ enrollment.term.session.name }}
+                            </td>
+
+                            <td>
+                                {{ enrollment.term.name }}
+                            </td>
+
+                            <td>
+                                <span class="class-badge">
+                                    {{ enrollment.class_level.name }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {% if enrollment.form_teacher_comment %}
+                                    {{ enrollment.form_teacher_comment }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if enrollment.academic_performance_comment %}
+                                    {{ enrollment.academic_performance_comment }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td
+                                colspan="5"
+                                class="empty-history"
+                            >
+                                No academic enrollment history.
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
