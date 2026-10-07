@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Rock Foundation Academy and College</title>
+
+    <meta
+        name="description"
+        content="Official website of Rock Foundation Academy and College. Excellence in learning, character and leadership."
+    >
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0b3d2e;
+            --primary-dark: #06271e;
+            --secondary: #d4a017;
+            --secondary-light: #f3d477;
+            --cream: #f8f7f2;
+            --white: #ffffff;
+            --text: #18231f;
+            --muted: #66736d;
+            --border: #e5e9e6;
+            --shadow: 0 18px 50px rgba(0, 0, 0, .10);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+            color: var(--text);
+            background: var(--white);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            width: min(1160px, 92%);
+            margin: auto;
+        }
+
+        /* TOP BAR */
+        .topbar {
+            background: var(--primary-dark);
+            color: #dce9e3;
+            font-size: 13px;
+            padding: 9px 0;
+        }
+
+        .topbar-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* NAVIGATION */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,.96);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-inner {
+            min-height: 78px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            min-width: 0;
+        }
+
+        .brand-logo {
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: var(--primary);
+            color: var(--secondary-light);
+            font-weight: 900;
+            font-size: 19px;
+            border: 3px solid var(--secondary);
+        }
+
+        .brand-text {
+            min-width: 0;
+        }
+
+        .brand-text strong {
+            display: block;
+            color: var(--primary);
+            font-size: 15px;
+            line-height: 1.15;
+        }
+
+        .brand-text span {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 3px;
+            letter-spacing: .5px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: #34413b;
+            font-size: 14px;
+            font-weight: 600;
+            transition: .2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-button {
+            padding: 11px 17px;
+            border-radius: 8px;
+            background: var(--primary);
+            color: white !important;
+        }
+
+        .nav-button:hover {
+            background: var(--primary-dark);
+        }
+
+        .menu-button {
+            display: none;
+            border: 0;
+            background: transparent;
+            font-size: 27px;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* HERO */
+        .hero {
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 85% 20%, rgba(212,160,23,.25), transparent 30%),
+                radial-gradient(circle at 10% 90%, rgba(50,130,95,.25), transparent 30%),
+                linear-gradient(135deg, #06271e 0%, #0b3d2e 55%, #12533f 100%);
+            color: white;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            opacity: .08;
+            background-image:
+                linear-gradient(30deg, #fff 12%, transparent 12.5%, transparent 87%, #fff 87.5%, #fff),
+                linear-gradient(150deg, #fff 12%, transparent 12.5%, transparent 87%, #fff 87.5%, #fff);
+            background-size: 70px 120px;
+        }
+
+        .hero-inner {
+            position: relative;
+            min-height: 610px;
+            display: grid;
+            grid-template-columns: 1.15fr .85fr;
+            align-items: center;
+            gap: 60px;
+            padding: 80px 0;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 8px 13px;
+            border: 1px solid rgba(255,255,255,.25);
+            background: rgba(255,255,255,.08);
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 22px;
+        }
+
+        .eyebrow::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            background: var(--secondary);
+            border-radius: 50%;
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 5vw, 67px);
+            line-height: 1.03;
+            letter-spacing: -2px;
+            max-width: 720px;
+        }
+
+        .hero h1 span {
+            color: var(--secondary-light);
+        }
+
+        .hero p {
+            margin-top: 23px;
+            max-width: 610px;
+            font-size: 17px;
+            color: #dce9e3;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 13px;
+            margin-top: 32px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 49px;
+            padding: 0 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 800;
+            transition: .2s;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: #1b210d;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            border: 1px solid rgba(255,255,255,.35);
+            color: white;
+            background: rgba(255,255,255,.06);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255,255,255,.12);
+        }
+
+        .hero-card {
+            padding: 30px;
+            border-radius: 18px;
+            background: rgba(255,255,255,.09);
+            border: 1px solid rgba(255,255,255,.17);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 25px 70px rgba(0,0,0,.20);
+        }
+
+        .hero-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .crest {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            border: 3px solid var(--secondary);
+            background: var(--primary-dark);
+            color: var(--secondary-light);
+            font-size: 25px;
+            font-weight: 900;
+        }
+
+        .official {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #dce9e3;
+        }
+
+        .hero-card h3 {
+            font-size: 24px;
+            line-height: 1.2;
+            margin-bottom: 10px;
+        }
+
+        .hero-card p {
+            font-size: 14px;
+            margin: 0;
+            color: #c8d9d2;
+        }
+
+        .hero-list {
+            list-style: none;
+            margin-top: 25px;
+            display: grid;
+            gap: 13px;
+        }
+
+        .hero-list li {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            font-size: 13px;
+            color: #e1ece7;
+        }
+
+        .check {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: rgba(212,160,23,.18);
+            color: var(--secondary-light);
+            font-weight: 900;
+        }
+
+        /* QUICK LINKS */
+        .quick-links {
+            position: relative;
+            margin-top: -45px;
+            z-index: 5;
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .quick-item {
+            padding: 25px;
+            border-right: 1px solid var(--border);
+            transition: .2s;
+        }
+
+        .quick-item:last-child {
+            border-right: 0;
+        }
+
+        .quick-item:hover {
+            background: var(--cream);
+        }
+
+        .quick-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .quick-item h3 {
+            font-size: 15px;
+            color: var(--primary);
+        }
+
+        .quick-item p {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        /* GENERAL */
+        section {
+            padding: 100px 0;
+        }
+
+        .section-label {
+            color: var(--secondary);
+            text-transform: uppercase;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            color: var(--primary);
+            font-size: clamp(30px, 4vw, 43px);
+            line-height: 1.12;
+            letter-spacing: -.8px;
+        }
+
+        .section-intro {
+            max-width: 650px;
+            color: var(--muted);
+            margin-top: 15px;
+        }
+
+        /* ABOUT */
+        .about {
+            background: var(--cream);
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 70px;
+            align-items: center;
+        }
+
+        .about-copy p {
+            color: var(--muted);
+            margin-top: 18px;
+        }
+
+        .about-highlights {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .highlight {
+            padding: 20px;
+            background: white;
+            border-radius: 11px;
+            border: 1px solid var(--border);
+        }
+
+        .highlight strong {
+            display: block;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .highlight span {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .about-panel {
+            min-height: 390px;
+            border-radius: 22px;
+            padding: 40px;
+            background:
+                linear-gradient(145deg, var(--primary), #176348);
+            color: white;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-panel::before {
+            content: "RFC";
+            position: absolute;
+            top: -50px;
+            right: -30px;
+            font-size: 180px;
+            font-weight: 900;
+            color: rgba(255,255,255,.05);
+        }
+
+        .about-panel h3 {
+            font-size: 30px;
+            position: relative;
+        }
+
+        .about-panel p {
+            color: #dce9e3;
+            margin-top: 10px;
+            position: relative;
+        }
+
+        /* ACADEMICS */
+        .academic-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 45px;
+        }
+
+        .academic-card {
+            padding: 30px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            transition: .25s;
+            background: white;
+        }
+
+        .academic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+            border-color: #d6dfda;
+        }
+
+        .academic-number {
+            font-size: 12px;
+            font-weight: 900;
+            color: var(--secondary);
+            letter-spacing: 1px;
+        }
+
+        .academic-card h3 {
+            margin-top: 12px;
+            color: var(--primary);
+            font-size: 21px;
+        }
+
+        .academic-card p {
+            color: var(--muted);
+            font-size: 14px;
+            margin-top: 9px;
+        }
+
+        /* VALUES */
+        .values {
+            background: var(--primary);
+            color: white;
+        }
+
+        .values .section-title {
+            color: white;
+        }
+
+        .values .section-intro {
+            color: #c9dad3;
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 45px;
+        }
+
+        .value {
+            padding: 28px 22px;
+            border: 1px solid rgba(255,255,255,.12);
+            border-radius: 13px;
+            background: rgba(255,255,255,.05);
+        }
+
+        .value span {
+            font-size: 27px;
+        }
+
+        .value h3 {
+            margin-top: 13px;
+            font-size: 17px;
+        }
+
+        .value p {
+            margin-top: 7px;
+            font-size: 13px;
+            color: #c9dad3;
+        }
+
+        /* PORTAL */
+        .portal {
+            background: #fff;
+        }
+
+        .portal-box {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            gap: 35px;
+            padding: 45px;
+            border-radius: 20px;
+            background: var(--cream);
+            border: 1px solid var(--border);
+        }
+
+        .portal-box p {
+            color: var(--muted);
+            margin-top: 9px;
+            max-width: 650px;
+        }
+
+        /* ADMISSIONS */
+        .admissions {
+            background: var(--cream);
+        }
+
+        .admission-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 45px;
+        }
+
+        .admission-card {
+            background: white;
+            padding: 30px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+        }
+
+        .admission-card .number {
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            font-weight: 900;
+        }
+
+        .admission-card h3 {
+            color: var(--primary);
+            margin-top: 17px;
+        }
+
+        .admission-card p {
+            color: var(--muted);
+            font-size: 14px;
+            margin-top: 7px;
+        }
+
+        /* CTA */
+        .cta {
+            padding: 80px 0;
+            background:
+                radial-gradient(circle at 85% 50%, rgba(212,160,23,.22), transparent 30%),
+                var(--primary-dark);
+            color: white;
+        }
+
+        .cta-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .cta h2 {
+            font-size: clamp(29px, 4vw, 43px);
+            line-height: 1.15;
+        }
+
+        .cta p {
+            color: #c9dad3;
+            margin-top: 9px;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #041a14;
+            color: #b8c9c2;
+            padding: 55px 0 25px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr 1fr;
+            gap: 50px;
+        }
+
+        footer h3 {
+            color: white;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        footer p,
+        footer a {
+            font-size: 13px;
+        }
+
+        footer a:hover {
+            color: white;
+        }
+
+        .footer-links {
+            display: grid;
+            gap: 9px;
+        }
+
+        .copyright {
+            border-top: 1px solid rgba(255,255,255,.09);
+            margin-top: 40px;
+            padding-top: 20px;
+            font-size: 12px;
+            color: #82958d;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        /* MOBILE */
+        @media (max-width: 900px) {
+            .nav-links {
+                position: absolute;
+                left: 4%;
+                right: 4%;
+                top: 72px;
+                display: none;
+                flex-direction: column;
+                align-items: stretch;
+                padding: 20px;
+                background: white;
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                box-shadow: var(--shadow);
+            }
+
+            .nav-links.open {
+                display: flex;
+            }
+
+            .menu-button {
+                display: block;
+            }
+
+            .hero-inner {
+                grid-template-columns: 1fr;
+                padding: 70px 0 100px;
+            }
+
+            .hero-card {
+                max-width: 600px;
+            }
+
+            .quick-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .quick-item:nth-child(2) {
+                border-right: 0;
+            }
+
+            .quick-item:nth-child(-n+2) {
+                border-bottom: 1px solid var(--border);
+            }
+
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .academic-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .values-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .admission-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .portal-box {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .topbar-inner {
+                justify-content: center;
+                text-align: center;
+            }
+
+            .topbar-inner span:last-child {
+                display: none;
+            }
+
+            .brand-text strong {
+                font-size: 13px;
+            }
+
+            .hero h1 {
+                letter-spacing: -1.3px;
+            }
+
+            .hero p {
+                font-size: 15px;
+            }
+
+            .quick-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-item {
+                border-right: 0;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .quick-item:last-child {
+                border-bottom: 0;
+            }
+
+            section {
+                padding: 70px 0;
+            }
+
+            .about-highlights,
+            .academic-grid,
+            .values-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .about-panel {
+                min-height: 300px;
+                padding: 28px;
+            }
+
+            .portal-box {
+                padding: 30px;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .copyright {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+    <div class="container topbar-inner">
+        <span>Official School Website</span>
+        <span>Excellence • Character • Leadership</span>
+    </div>
+</div>
+
+<!-- NAVIGATION -->
+<nav class="navbar">
+    <div class="container nav-inner">
+
+        <a href="{% url 'official_homepage' %}" class="brand">
+            <div class="brand-logo">RF</div>
+
+            <div class="brand-text">
+                <strong>Rock Foundation Academy</strong>
+                <span>AND COLLEGE</span>
+            </div>
+        </a>
+
+        <button class="menu-button" onclick="toggleMenu()" aria-label="Open menu">
+            ☰
+        </button>
+
+        <div class="nav-links" id="navLinks">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#academics">Academics</a>
+            <a href="#admissions">Admissions</a>
+            <a href="#contact">Contact</a>
+            <a href="{% url 'public_result_portal' %}" class="nav-button">
+                Results Portal
+            </a>
+        </div>
+
+    </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="home">
+    <div class="container hero-inner">
+
+        <div>
+            <div class="eyebrow">
+                Welcome to our school
+            </div>
+
+            <h1>
+                Building minds for
+                <span>a brighter future.</span>
+            </h1>
+
+            <p>
+                Welcome to Rock Foundation Academy and College —
+                a learning community committed to academic excellence,
+                strong character and responsible leadership.
+            </p>
+
+            <div class="hero-actions">
+                <a href="#about" class="btn btn-primary">
+                    Discover Our School
+                </a>
+
+                <a href="{% url 'public_result_portal' %}" class="btn btn-outline">
+                    Check Student Results
+                </a>
+            </div>
+        </div>
+
+        <div class="hero-card">
+
+            <div class="hero-card-top">
+                <div class="crest">RF</div>
+                <div class="official">Official Portal</div>
+            </div>
+
+            <h3>
+                Education beyond the classroom.
+            </h3>
+
+            <p>
+                We develop students academically, socially and morally,
+                preparing them for higher education and meaningful leadership.
+            </p>
+
+            <ul class="hero-list">
+                <li>
+                    <span class="check">✓</span>
+                    Strong academic foundation
+                </li>
+
+                <li>
+                    <span class="check">✓</span>
+                    Character and discipline
+                </li>
+
+                <li>
+                    <span class="check">✓</span>
+                    Leadership development
+                </li>
+
+                <li>
+                    <span class="check">✓</span>
+                    Supportive learning environment
+                </li>
+            </ul>
+
+        </div>
+
+    </div>
+</header>
+
+<!-- QUICK LINKS -->
+<div class="quick-links">
+    <div class="container">
+
+        <div class="quick-grid">
+
+            <a href="#academics" class="quick-item">
+                <div class="quick-icon">🎓</div>
+                <h3>Academic Programmes</h3>
+                <p>Explore our learning structure.</p>
+            </a>
+
+            <a href="#admissions" class="quick-item">
+                <div class="quick-icon">📚</div>
+                <h3>Admissions</h3>
+                <p>Begin your journey with us.</p>
+            </a>
+
+            <a href="{% url 'public_result_portal' %}" class="quick-item">
+                <div class="quick-icon">📊</div>
+                <h3>Results Portal</h3>
+                <p>Access student academic results.</p>
+            </a>
+
+            <a href="{% url 'teacher_login' %}" class="quick-item">
+                <div class="quick-icon">👨‍🏫</div>
+                <h3>Teacher Portal</h3>
+                <p>Secure staff access.</p>
+            </a>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+    <div class="container about-grid">
+
+        <div class="about-copy">
+            <div class="section-label">Who We Are</div>
+
+            <h2 class="section-title">
+                A school built around excellence and purpose.
+            </h2>
+
+            <p>
+                Rock Foundation Academy and College is committed to creating
+                an environment where students can learn confidently,
+                discover their potential and develop the values needed
+                to become responsible members of society.
+            </p>
+
+            <p>
+                Our approach combines sound academic instruction with
+                discipline, character formation, creativity and leadership.
+            </p>
+
+            <div class="about-highlights">
+
+                <div class="highlight">
+                    <strong>Academic Excellence</strong>
+                    <span>Focused teaching and meaningful learning.</span>
+                </div>
+
+                <div class="highlight">
+                    <strong>Character</strong>
+                    <span>Values that guide students beyond school.</span>
+                </div>
+
+                <div class="highlight">
+                    <strong>Leadership</strong>
+                    <span>Preparing students to make a difference.</span>
+                </div>
+
+                <div class="highlight">
+                    <strong>Student Growth</strong>
+                    <span>Supporting the whole learner.</span>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="about-panel">
+            <h3>Learning today. Leading tomorrow.</h3>
+
+            <p>
+                We believe every student has the ability to grow,
+                achieve and contribute meaningfully when given the
+                right environment and guidance.
+            </p>
+        </div>
+
+    </div>
+</section>
+
+<!-- ACADEMICS -->
+<section id="academics">
+    <div class="container">
+
+        <div class="section-label">Academics</div>
+
+        <h2 class="section-title">
+            A structured path from foundation to excellence.
+        </h2>
+
+        <p class="section-intro">
+            Our academic structure supports students through their
+            junior and senior secondary education while encouraging
+            curiosity, discipline and independent thinking.
+        </p>
+
+        <div class="academic-grid">
+
+            <div class="academic-card">
+                <div class="academic-number">01 — JUNIOR SECONDARY</div>
+                <h3>Junior Secondary School</h3>
+                <p>
+                    A strong foundation in core subjects, study habits,
+                    character development and practical learning.
+                </p>
+            </div>
+
+            <div class="academic-card">
+                <div class="academic-number">02 — SENIOR SECONDARY</div>
+                <h3>Senior Secondary School</h3>
+                <p>
+                    Focused academic preparation designed to help students
+                    progress confidently toward higher education and careers.
+                </p>
+            </div>
+
+            <div class="academic-card">
+                <div class="academic-number">03 — DIGITAL RESULTS</div>
+                <h3>Academic Progress</h3>
+                <p>
+                    Our digital result portal provides convenient access
+                    to student academic performance.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- VALUES -->
+<section class="values">
+    <div class="container">
+
+        <div class="section-label">Our Values</div>
+
+        <h2 class="section-title">
+            The values behind our education.
+        </h2>
+
+        <p class="section-intro">
+            Education is more than examination results. We help students
+            develop the habits and values that shape their future.
+        </p>
+
+        <div class="values-grid">
+
+            <div class="value">
+                <span>🎯</span>
+                <h3>Excellence</h3>
+                <p>
+                    Encouraging students to pursue their best.
+                </p>
+            </div>
+
+            <div class="value">
+                <span>🤝</span>
+                <h3>Integrity</h3>
+                <p>
+                    Building honesty, responsibility and trust.
+                </p>
+            </div>
+
+            <div class="value">
+                <span>💡</span>
+                <h3>Innovation</h3>
+                <p>
+                    Encouraging curiosity, creativity and problem solving.
+                </p>
+            </div>
+
+            <div class="value">
+                <span>🌍</span>
+                <h3>Leadership</h3>
+                <p>
+                    Preparing young people to positively influence society.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- RESULTS PORTAL -->
+<section class="portal">
+    <div class="container">
+
+        <div class="portal-box">
+
+            <div>
+                <div class="section-label">Student Services</div>
+
+                <h2 class="section-title">
+                    Access academic results online.
+                </h2>
+
+                <p>
+                    Students and parents can use the school's official
+                    result portal to access published academic results.
+                </p>
+            </div>
+
+            <a href="{% url 'public_result_portal' %}" class="btn btn-primary">
+                Open Results Portal
+            </a>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- ADMISSIONS -->
+<section class="admissions" id="admissions">
+    <div class="container">
+
+        <div class="section-label">Admissions</div>
+
+        <h2 class="section-title">
+            Start your journey with us.
+        </h2>
+
+        <p class="section-intro">
+            Families interested in joining our school are encouraged
+            to contact the school office for current admission information,
+            requirements and availability.
+        </p>
+
+        <div class="admission-grid">
+
+            <div class="admission-card">
+                <div class="number">1</div>
+                <h3>Make an Enquiry</h3>
+                <p>
+                    Contact the school office for admission information
+                    and available classes.
+                </p>
+            </div>
+
+            <div class="admission-card">
+                <div class="number">2</div>
+                <h3>Complete the Process</h3>
+                <p>
+                    Follow the school's official admission procedure
+                    and provide the required documentation.
+                </p>
+            </div>
+
+            <div class="admission-card">
+                <div class="number">3</div>
+                <h3>Join Our Community</h3>
+                <p>
+                    Begin a new academic journey in a supportive
+                    learning environment.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="contact">
+    <div class="container cta-inner">
+
+        <div>
+            <h2>Ready to take the next step?</h2>
+
+            <p>
+                Explore our student services or contact the school
+                for official enquiries.
+            </p>
+        </div>
+
+        <div class="hero-actions">
+            <a href="{% url 'public_result_portal' %}" class="btn btn-primary">
+                Student Results
+            </a>
+
+            <a href="{% url 'teacher_login' %}" class="btn btn-outline">
+                Teacher Login
+            </a>
+
+            <a href="{% url 'dashboard' %}" class="btn btn-outline">
+                School Management
+            </a>
+        </div>
+
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="container">
+
+        <div class="footer-grid">
+
+            <div>
+                <h3>Rock Foundation Academy and College</h3>
+
+                <p>
+                    Excellence in learning, character and leadership.
+                    Preparing students for a successful future.
+                </p>
+            </div>
+
+            <div>
+                <h3>Quick Links</h3>
+
+                <div class="footer-links">
+                    <a href="#about">About the School</a>
+                    <a href="#academics">Academics</a>
+                    <a href="#admissions">Admissions</a>
+                    <a href="{% url 'public_result_portal' %}">
+                        Results Portal
+                    </a>
+                </div>
+            </div>
+
+            <div>
+                <h3>Portals</h3>
+
+                <div class="footer-links">
+                    <a href="{% url 'teacher_login' %}">
+                        Teacher Login
+                    </a>
+
+                    <a href="{% url 'dashboard' %}">
+                        School Management
+                    </a>
+
+                    <a href="{% url 'admin:index' %}">
+                        Administration
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="copyright">
+            <span>
+                © 2026 Rock Foundation Academy and College.
+                All rights reserved.
+            </span>
+
+            <span>
+                Official School Website
+            </span>
+        </div>
+
+    </div>
+</footer>
+
+<script>
+    function toggleMenu() {
+        const menu = document.getElementById("navLinks");
+        menu.classList.toggle("open");
+    }
+
+    document.querySelectorAll(".nav-links a").forEach(function(link) {
+        link.addEventListener("click", function() {
+            document.getElementById("navLinks").classList.remove("open");
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -3725,3 +3725,10 @@ def teacher_attendance_history(request):
             ],
         },
     )
+
+
+def official_homepage(request):
+    return render(
+        request,
+        "school/official_homepage.html",
+    )

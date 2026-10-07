@@ -26,7 +26,8 @@ path("api/student/dashboard/", StudentDashboardAPIView.as_view(), name="student_
     path("form-teacher-comments/<int:class_id>/student/<int:student_id>/", views.form_teacher_student_comments, name="form_teacher_student_comments"),
     path("result-portal/", public_result_portal, name="public_result_portal"),
     path("result-portal/pdf/", public_result_pdf, name="public_result_pdf"),
-    path("", views.dashboard, name="dashboard"),
+    path("", views.official_homepage, name="official_homepage"),
+    path("dashboard/", views.dashboard, name="dashboard"),
     path("promotion/", views.student_promotion, name="student_promotion"),
     path(
         "academic-sessions/",
